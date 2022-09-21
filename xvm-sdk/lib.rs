@@ -1,0 +1,53 @@
+//! The XVM public interface for Ink! smart contracts.
+#![cfg_attr(not(feature = "std"), no_std)]
+
+use ink_lang as ink;
+use ink_env::{Environment, DefaultEnvironment};
+use ink_prelude::vec::Vec;
+
+/// General result type.
+pub type Result<T> = core::result::Result<T, XvmError>;
+
+/// The XVM chain extension adapter.
+#[ink::chain_extension]
+pub trait XvmExtension {
+    type ErrorCode = XvmError;
+
+    #[ink(extension = 1, returns_result = false)]
+    fn xvm_call(vm_id: u8, target: Vec<u8>, input: Vec<u8>) -> Result<()>;
+}
+
+/// XVM chain extension errors.
+#[derive(scale::Encode, scale::Decode)]
+#[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
+pub enum XvmError {
+    FailXvmCall,
+}
+
+impl ink_env::chain_extension::FromStatusCode for XvmError {
+    fn from_status_code(status_code: u32) -> core::result::Result<(), Self> {
+        match status_code {
+            0 => Ok(()),
+            1 => Err(Self::FailXvmCall),
+            _ => panic!("encountered unknown status code"),
+        }
+    }
+}
+
+/// XVM default contract environment.
+#[derive(Debug, Clone, PartialEq, Eq)]
+#[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
+pub enum XvmDefaultEnvironment {}
+
+impl Environment for XvmDefaultEnvironment {
+    const MAX_EVENT_TOPICS: usize =
+        <DefaultEnvironment as Environment>::MAX_EVENT_TOPICS;
+
+    type AccountId = <DefaultEnvironment as Environment>::AccountId;
+    type Balance = <DefaultEnvironment as Environment>::Balance;
+    type Hash = <DefaultEnvironment as Environment>::Hash;
+    type BlockNumber = <DefaultEnvironment as Environment>::BlockNumber;
+    type Timestamp = <DefaultEnvironment as Environment>::Timestamp;
+
+    type ChainExtension = XvmExtension;
+}
