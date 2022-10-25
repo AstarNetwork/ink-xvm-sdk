@@ -13,7 +13,7 @@ pub type Result<T> = core::result::Result<T, XvmError>;
 pub trait XvmExtension {
     type ErrorCode = XvmError;
 
-    #[ink(extension = 1, returns_result = false)]
+    #[ink(extension = 0x00010001)]
     fn xvm_call(vm_id: u8, target: Vec<u8>, input: Vec<u8>) -> Result<()>;
 }
 
@@ -50,4 +50,10 @@ impl Environment for XvmDefaultEnvironment {
     type Timestamp = <DefaultEnvironment as Environment>::Timestamp;
 
     type ChainExtension = XvmExtension;
+}
+
+impl From<scale::Error> for XvmError {
+    fn from(_: scale::Error) -> Self {
+        panic!("encountered unexpected invalid SCALE encoding")
+    }
 }
