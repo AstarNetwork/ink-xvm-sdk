@@ -87,31 +87,34 @@ mod erc20 {
         }
 
         fn approve_encode(to: H160, value: U256) -> Vec<u8> {
+            let mut encoded = APPROVE_SELECTOR.to_vec();
             let input = [
-                Token::FixedBytes(APPROVE_SELECTOR.to_vec()),
                 Token::Address(to),
                 Token::Uint(value),
             ];
-            ethabi::encode(&input)
+            encoded.extend(&ethabi::encode(&input));
+            encoded
         }
 
         fn transfer_encode(to: H160, value: U256) -> Vec<u8> {
+            let mut encoded = TRANSFER_SELECTOR.to_vec();
             let input = [
-                Token::FixedBytes(TRANSFER_SELECTOR.to_vec()),
                 Token::Address(to),
                 Token::Uint(value),
             ];
-            ethabi::encode(&input)
+            encoded.extend(&ethabi::encode(&input));
+            encoded
         }
 
         fn transfer_from_encode(from: H160, to: H160, value: U256) -> Vec<u8> {
+            let mut encoded = TRANSFER_FROM_SELECTOR.to_vec();
             let input = [
-                Token::FixedBytes(TRANSFER_FROM_SELECTOR.to_vec()),
                 Token::Address(from),
                 Token::Address(to),
                 Token::Uint(value),
             ];
-            ethabi::encode(&input)
+            encoded.extend(&ethabi::encode(&input));
+            encoded
         }
     }
 
