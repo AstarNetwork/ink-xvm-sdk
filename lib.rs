@@ -20,14 +20,13 @@ mod erc20_sample {
             evm_contract_address: [u8; 20],
         ) -> Self {
             let salt = version.to_le_bytes();
-            let total_balance = Self::env().balance();
             let erc20 = Erc20Ref::new(evm_contract_address.into())
-                .endowment(total_balance / 2)
+                .endowment(0)
                 .code_hash(erc20_code_hash)
                 .salt_bytes(salt)
                 .instantiate()
                 .unwrap_or_else(|error| {
-                    panic!("failed at instantiating the Accumulator contract: {:?}", error)
+                    panic!("failed at instantiating the erc20 contract: {:?}", error)
                 });
             Self { erc20 } 
         }
