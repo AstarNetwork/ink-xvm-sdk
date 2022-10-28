@@ -14,11 +14,7 @@ mod erc20_sample {
 
     impl Erc20Sample {
         #[ink(constructor)]
-        pub fn new(
-            version: u32,
-            erc20_code_hash: Hash,
-            evm_contract_address: [u8; 20],
-        ) -> Self {
+        pub fn new(version: u32, erc20_code_hash: Hash, evm_contract_address: [u8; 20]) -> Self {
             let salt = version.to_le_bytes();
             let erc20 = Erc20Ref::new(evm_contract_address.into())
                 .endowment(0)
@@ -28,7 +24,7 @@ mod erc20_sample {
                 .unwrap_or_else(|error| {
                     panic!("failed at instantiating the erc20 contract: {:?}", error)
                 });
-            Self { erc20 } 
+            Self { erc20 }
         }
 
         #[ink(message)]
