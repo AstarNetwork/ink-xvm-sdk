@@ -17,7 +17,6 @@ mod erc721 {
     const TRANSFER_FROM_SELECTOR: [u8; 4] = hex!["095ea7b3"];
     const MINT_SELECTOR: [u8; 4] = hex!["40c10f19"];
 
-    use alloc::vec::Vec;
     use ethabi::{ethereum_types::{H160, U256}, Token};
     use ink_prelude::vec::Vec;
     use hex_literal::hex;
@@ -37,7 +36,7 @@ mod erc721 {
         }
 
         #[ink(message)]
-        pub fn transfer_from(&mut self, from: [u8; 20], to: [u8; 20], token_id: U256) {
+        pub fn transfer_from(&mut self, from: [u8; 20], to: [u8; 20], token_id: u128) -> bool {
             let encoded_input = Self::transfer_from_encode(from.into(), to.into(), token_id.into());
             self.env()
                 .extension()
@@ -47,11 +46,6 @@ mod erc721 {
                     encoded_input,
                 )
                 .is_ok()
-        }
-
-        #[ink(message)]
-        pub fn set_approval_for_all(operator: [u8; 20], approved: bool) {
-
         }
 
         fn transfer_from_encode(from: H160, to: H160, token_id: U256) -> Vec<u8> {

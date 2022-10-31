@@ -1,5 +1,5 @@
 [package]
-name = "xvm-sdk-erc20"
+name = "xvm-sdk-erc721"
 version = "0.1.0"
 authors = ["Astar Network"]
 edition = "2021"

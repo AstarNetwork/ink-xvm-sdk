@@ -97,7 +97,7 @@ mod psp22 {
                 .map_err(|_| PSP22Error::Custom(String::from("transfer_from failed")))
         }
 
-        /// Helper function to get H160 address of the
+        /// Helper function to get H160 address of the 32 bytes accountId
         #[ink(message)]
         pub fn to_h160_address(&self, from: AccountId) -> String {
             Self::h160(&from).to_string()
