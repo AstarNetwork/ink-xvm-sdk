@@ -13,7 +13,7 @@ const EVM_ID: u8 = 0x1F;
 /// The EVM ERC721 delegation contract.
 #[ink::contract(env = xvm_sdk::XvmDefaultEnvironment)]
 mod erc721 {
-    const BALANCE_OF_SELECTOR: [u8; 4] = hex!["todo"];
+    const IS_APPROVED_FOR_ALL_SELECTOR: [u8; 4] = hex!["todo"];
 
     use ethabi::{ethereum_types::{H160, U256}, Token};
     use ink_prelude::vec::Vec;
@@ -33,20 +33,49 @@ mod erc721 {
             }
         }
 
+        // For now we can't handle methods returning complex values
+        // #[ink(message)]
+        // pub fn balance_of(&self, owner: [u8; 20]) -> u128 {
+        //     let encoded_input = Self::balance_of_encode(owner.into());
+        // }
+
+        // fn balance_of_encode(to: H160, value: U256) -> Vec<u8> {
+        //     let input = [
+        //         Token::FixedBytes(BALANCE_OF_SELECTOR.to_vec()),
+        //         Token::Address(to),
+        //     ];
+        //     ethabi::encode(&input)
+        // }
+
         #[ink(message)]
-        pub fn balance_of(&self, owner: [u8; 20]) -> u128 {
-            let encoded_input = Self::balance_of_encode(owner.into());
+        pub fn approve(to: [u8; 20], tokenId: U256) {
+
         }
 
-        fn balance_of_encode(to: H160, value: U256) -> Vec<u8> {
+        #[ink(message)]
+        pub fn set_approval_for_all(operator: [u8; 20], approved: bool) {
+
+        }
+
+        #[ink(message)]
+        pub fn is_approved_for_all(owner: [u8; 20], operator: [u8; 20]) -> bool {
             let input = [
-                Token::FixedBytes(BALANCE_OF_SELECTOR.to_vec()),
-                Token::Address(to),
+                Token::FixedBytes(IS_APPROVED_FOR_ALL_SELECTOR.to_vec()),
+                Token::Address(owner),
+                Token::Address(operator),
             ];
-            ethabi::encode(&input)
+            let input = ethabi::encode(&input);
+
+            self.env()
+                .extension()
+                .xvm_call(
+                    super::EVM_ID,
+                    Vec::from(self.evm_address.as_ref()),
+                    input,
+                )
+                .is_ok()
         }
 
-        
     }
 
     #[cfg(test)]
