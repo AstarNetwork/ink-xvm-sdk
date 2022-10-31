@@ -26,9 +26,15 @@ mod erc20 {
     const TRANSFER_SELECTOR: [u8; 4] = hex!["a9059cbb"];
     const TRANSFER_FROM_SELECTOR: [u8; 4] = hex!["23b872dd"];
 
-    use ethabi::{ethereum_types::{H160, U256}, Token};
-    use ink_prelude::vec::Vec;
+    use ethabi::{
+        ethereum_types::{
+            H160,
+            U256,
+        },
+        Token,
+    };
     use hex_literal::hex;
+    use ink_prelude::vec::Vec;
 
     #[ink(storage)]
     pub struct Erc20 {
@@ -39,9 +45,7 @@ mod erc20 {
         /// Create new ERC20 abstraction from given contract address.
         #[ink(constructor)]
         pub fn new(evm_address: [u8; 20]) -> Self {
-            Self {
-                evm_address,
-            }
+            Self { evm_address }
         }
 
         /// Send `approve` call to ERC20 contract.
@@ -60,7 +64,7 @@ mod erc20 {
 
         /// Send `transfer` call to ERC20 contract.
         #[ink(message)]
-        pub fn transfer(&mut self, to: [u8; 20], value: u128)  -> bool {
+        pub fn transfer(&mut self, to: [u8; 20], value: u128) -> bool {
             let encoded_input = Self::transfer_encode(to.into(), value.into());
             self.env()
                 .extension()
@@ -74,7 +78,7 @@ mod erc20 {
 
         /// Send `transfer_from` call to ERC20 contract.
         #[ink(message)]
-        pub fn transfer_from(&mut self, from: [u8; 20], to: [u8; 20], value: u128)  -> bool {
+        pub fn transfer_from(&mut self, from: [u8; 20], to: [u8; 20], value: u128) -> bool {
             let encoded_input = Self::transfer_from_encode(from.into(), to.into(), value.into());
             self.env()
                 .extension()
@@ -88,31 +92,21 @@ mod erc20 {
 
         fn approve_encode(to: H160, value: U256) -> Vec<u8> {
             let mut encoded = APPROVE_SELECTOR.to_vec();
-            let input = [
-                Token::Address(to),
-                Token::Uint(value),
-            ];
+            let input = [Token::Address(to), Token::Uint(value)];
             encoded.extend(&ethabi::encode(&input));
             encoded
         }
 
         fn transfer_encode(to: H160, value: U256) -> Vec<u8> {
             let mut encoded = TRANSFER_SELECTOR.to_vec();
-            let input = [
-                Token::Address(to),
-                Token::Uint(value),
-            ];
+            let input = [Token::Address(to), Token::Uint(value)];
             encoded.extend(&ethabi::encode(&input));
             encoded
         }
 
         fn transfer_from_encode(from: H160, to: H160, value: U256) -> Vec<u8> {
             let mut encoded = TRANSFER_FROM_SELECTOR.to_vec();
-            let input = [
-                Token::Address(from),
-                Token::Address(to),
-                Token::Uint(value),
-            ];
+            let input = [Token::Address(from), Token::Address(to), Token::Uint(value)];
             encoded.extend(&ethabi::encode(&input));
             encoded
         }
@@ -135,7 +129,11 @@ mod erc20 {
             let input = Erc20::transfer_encode(SAMPLE_TO.into(), SAMPLE_VALUE.into());
             assert_eq!(input, hex![]);
 
-            let input = Erc20::transfer_from_encode(SAMPLE_FROM.into(), SAMPLE_TO.into(), SAMPLE_VALUE.into());
+            let input = Erc20::transfer_from_encode(
+                SAMPLE_FROM.into(),
+                SAMPLE_TO.into(),
+                SAMPLE_VALUE.into(),
+            );
             assert_eq!(input, hex![]);
         }
     }

@@ -1,8 +1,11 @@
 //! The XVM public interface for Ink! smart contracts.
 #![cfg_attr(not(feature = "std"), no_std)]
 
+use ink_env::{
+    DefaultEnvironment,
+    Environment,
+};
 use ink_lang as ink;
-use ink_env::{Environment, DefaultEnvironment};
 use ink_prelude::vec::Vec;
 
 /// General result type.
@@ -40,8 +43,7 @@ impl ink_env::chain_extension::FromStatusCode for XvmError {
 pub enum XvmDefaultEnvironment {}
 
 impl Environment for XvmDefaultEnvironment {
-    const MAX_EVENT_TOPICS: usize =
-        <DefaultEnvironment as Environment>::MAX_EVENT_TOPICS;
+    const MAX_EVENT_TOPICS: usize = <DefaultEnvironment as Environment>::MAX_EVENT_TOPICS;
 
     type AccountId = <DefaultEnvironment as Environment>::AccountId;
     type Balance = <DefaultEnvironment as Environment>::Balance;
