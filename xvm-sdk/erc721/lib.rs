@@ -13,18 +13,7 @@ const EVM_ID: u8 = 0x1F;
 /// The EVM ERC721 delegation contract.
 #[ink::contract(env = xvm_sdk::XvmDefaultEnvironment)]
 mod erc721 {
-    // ======= IERC721.sol:IERC721 =======
-    // Function signatures:
-    // dd62ed3e: allowance(address,address)
-    // 095ea7b3: approve(address,uint256)
-    // 70a08231: balanceOf(address)
-    // 18160ddd: totalSupply()
-    // a9059cbb: transfer(address,uint256)
-    // 23b872dd: transferFrom(address,address,uint256)
-    //
-    const APPROVE_SELECTOR: [u8; 4] = hex!["095ea7b3"];
-    const TRANSFER_SELECTOR: [u8; 4] = hex!["a9059cbb"];
-    const TRANSFER_FROM_SELECTOR: [u8; 4] = hex!["23b872dd"];
+    const BALANCE_OF_SELECTOR: [u8; 4] = hex!["todo"];
 
     use ethabi::{ethereum_types::{H160, U256}, Token};
     use ink_prelude::vec::Vec;
@@ -44,7 +33,6 @@ mod erc721 {
             }
         }
 
-
         #[ink(message)]
         pub fn balance_of(&self, owner: [u8; 20]) -> u128 {
             let encoded_input = Self::balance_of_encode(owner.into());
@@ -58,76 +46,7 @@ mod erc721 {
             ethabi::encode(&input)
         }
 
-
-        /// Send `approve` call to ERC20 contract.
-        #[ink(message)]
-        pub fn approve(&self, to: [u8; 20], value: u128) -> bool {
-            let encoded_input = Self::approve_encode(to.into(), value.into());
-            self.env()
-                .extension()
-                .xvm_call(
-                    super::EVM_ID,
-                    Vec::from(self.evm_address.as_ref()),
-                    encoded_input,
-                )
-                .is_ok()
-        }
-
-        /// Send `transfer` call to ERC20 contract.
-        #[ink(message)]
-        pub fn transfer(&self, to: [u8; 20], value: u128)  -> bool {
-            let encoded_input = Self::transfer_encode(to.into(), value.into());
-            self.env()
-                .extension()
-                .xvm_call(
-                    super::EVM_ID,
-                    Vec::from(self.evm_address.as_ref()),
-                    encoded_input,
-                )
-                .is_ok()
-        }
-
-        /// Send `transfer_from` call to ERC20 contract.
-        #[ink(message)]
-        pub fn transfer_from(&self, from: [u8; 20], to: [u8; 20], value: u128)  -> bool {
-            let encoded_input = Self::transfer_from_encode(from.into(), to.into(), value.into());
-            self.env()
-                .extension()
-                .xvm_call(
-                    super::EVM_ID,
-                    Vec::from(self.evm_address.as_ref()),
-                    encoded_input,
-                )
-                .is_ok()
-        }
-
-        fn approve_encode(to: H160, value: U256) -> Vec<u8> {
-            let input = [
-                Token::FixedBytes(APPROVE_SELECTOR.to_vec()),
-                Token::Address(to),
-                Token::Uint(value),
-            ];
-            ethabi::encode(&input)
-        }
-
-        fn transfer_encode(to: H160, value: U256) -> Vec<u8> {
-            let input = [
-                Token::FixedBytes(TRANSFER_SELECTOR.to_vec()),
-                Token::Address(to),
-                Token::Uint(value),
-            ];
-            ethabi::encode(&input)
-        }
-
-        fn transfer_from_encode(from: H160, to: H160, value: U256) -> Vec<u8> {
-            let input = [
-                Token::FixedBytes(TRANSFER_FROM_SELECTOR.to_vec()),
-                Token::Address(from),
-                Token::Address(to),
-                Token::Uint(value),
-            ];
-            ethabi::encode(&input)
-        }
+        
     }
 
     #[cfg(test)]
@@ -141,14 +60,7 @@ mod erc721 {
 
         #[test]
         fn arguments_encoding() {
-            let input = Erc20::approve_encode(SAMPLE_TO.into(), SAMPLE_VALUE.into());
-            assert_eq!(input, hex![]);
-
-            let input = Erc20::transfer_encode(SAMPLE_TO.into(), SAMPLE_VALUE.into());
-            assert_eq!(input, hex![]);
-
-            let input = Erc20::transfer_from_encode(SAMPLE_FROM.into(), SAMPLE_TO.into(), SAMPLE_VALUE.into());
-            assert_eq!(input, hex![]);
+            
         }
     }
 }
