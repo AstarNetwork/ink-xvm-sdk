@@ -41,5 +41,5 @@ ink-as-dependency = []
 [workspace]
 members = [
     "xvm-sdk",
-    "xvm-sdk/erc20",
+    "xvm-sdk/**",
 ]
