@@ -111,30 +111,4 @@ mod erc20 {
             encoded
         }
     }
-
-    #[cfg(test)]
-    mod tests {
-        use super::*;
-
-        const SAMPLE_CONTRACT: [u8; 20] = hex!["a10d3DBe7c28F46A90476B841B8509978e00B995"];
-        const SAMPLE_TO: [u8; 20] = hex!["7C32982c3e7Fb8B2AF6ABD3323583C6A41f921C5"];
-        const SAMPLE_FROM: [u8; 20] = hex!["d806D071365C9Cc3EE19873212A3E0D553Ab97Da"];
-        const SAMPLE_VALUE: u128 = 12353241324u128;
-
-        #[test]
-        fn arguments_encoding() {
-            let input = Erc20::approve_encode(SAMPLE_TO.into(), SAMPLE_VALUE.into());
-            assert_eq!(input, hex![]);
-
-            let input = Erc20::transfer_encode(SAMPLE_TO.into(), SAMPLE_VALUE.into());
-            assert_eq!(input, hex![]);
-
-            let input = Erc20::transfer_from_encode(
-                SAMPLE_FROM.into(),
-                SAMPLE_TO.into(),
-                SAMPLE_VALUE.into(),
-            );
-            assert_eq!(input, hex![]);
-        }
-    }
 }
