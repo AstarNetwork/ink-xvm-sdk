@@ -1,5 +1,5 @@
 [package]
-name = "xvm-sdk-psp22"
+name = "xvm-sdk-psp22-controller"
 version = "0.1.0"
 authors = ["Astar Network"]
 edition = "2021"
@@ -20,7 +20,7 @@ scale-info = { version = "2", default-features = false, features = ["derive"], o
 xvm-sdk = { path = "..", default-features = false }
 
 [lib]
-name = "xvm_sdk_psp22"
+name = "xvm_sdk_psp22_controller"
 path = "lib.rs"
 crate-type = [
     # Used for normal contract Wasm blobs.
