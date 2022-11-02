@@ -1,5 +1,5 @@
 [package]
-name = "xvm-sdk-erc20-sample"
+name = "xvm-sdk-erc721"
 version = "0.1.0"
 authors = ["Astar Network"]
 edition = "2021"
@@ -10,18 +10,23 @@ ink_metadata = { version = "3.4.0", default-features = false, features = ["deriv
 ink_env = { version = "3.4.0", default-features = false }
 ink_storage = { version = "3.4.0", default-features = false }
 ink_lang = { version = "3.4.0", default-features = false }
+ink_prelude = { version = "3.4.0", default-features = false }
+ethabi = { git = "https://github.com/akru/ethabi", default-features = false }
+hex-literal = "0.3"
 
 scale = { package = "parity-scale-codec", version = "3", default-features = false, features = ["derive"] }
 scale-info = { version = "2", default-features = false, features = ["derive"], optional = true }
 
-xvm-sdk-erc20 = { path = "./xvm-sdk/erc20", default-features = false, features = ["ink-as-dependency"] }
+xvm-sdk = { path = "..", default-features = false }
 
 [lib]
-name = "xvm_sdk_erc20_sample"
+name = "xvm_sdk_erc721"
 path = "lib.rs"
 crate-type = [
 	# Used for normal contract Wasm blobs.
 	"cdylib",
+    # Used for ABI generation.
+    "rlib",
 ]
 
 [features]
@@ -33,13 +38,6 @@ std = [
     "ink_primitives/std",
     "scale/std",
     "scale-info/std",
-    "xvm-sdk-erc20/std",
+    "xvm-sdk/std",
 ]
 ink-as-dependency = []
-
-
-[workspace]
-members = [
-    "xvm-sdk",
-    "xvm-sdk/**",
-]
