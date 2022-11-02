@@ -17,9 +17,15 @@ mod erc721 {
     const TRANSFER_FROM_SELECTOR: [u8; 4] = hex!["23b872dd"];
     const MINT_SELECTOR: [u8; 4] = hex!["40c10f19"];
 
-    use ethabi::{ethereum_types::{H160, U256}, Token};
-    use ink_prelude::vec::Vec;
+    use ethabi::{
+        ethereum_types::{
+            H160,
+            U256,
+        },
+        Token,
+    };
     use hex_literal::hex;
+    use ink_prelude::vec::Vec;
 
     #[ink(storage)]
     pub struct Erc721 {
@@ -30,9 +36,7 @@ mod erc721 {
         /// Create new ERC721 abstraction from given contract address.
         #[ink(constructor)]
         pub fn new(evm_address: [u8; 20]) -> Self {
-            Self {
-                evm_address,
-            }
+            Self { evm_address }
         }
 
         #[ink(message)]
