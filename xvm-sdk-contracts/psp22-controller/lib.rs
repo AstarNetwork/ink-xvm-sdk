@@ -1,4 +1,4 @@
-//! PSP22 Wrapper around ERC20 EVM contract interoperability using XVM interface.
+//! PSP22 Controller of an ERC20 EVM contract interoperability using XVM interface.
 #![cfg_attr(not(feature = "std"), no_std)]
 
 use ink_lang as ink;
