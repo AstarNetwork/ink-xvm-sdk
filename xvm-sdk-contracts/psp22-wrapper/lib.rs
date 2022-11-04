@@ -70,8 +70,7 @@ pub mod my_psp22 {
         pub fn withdraw(&mut self, amount: Balance) -> Result<(), PSP22Error> {
             let caller = self.env().caller();
             self._burn_from(caller, amount)?;
-            PSP22Ref::transfer(&mut self.psp22_controller, caller, amount, Vec::new())?;
-            Ok(())
+            PSP22Ref::transfer(&mut self.psp22_controller, caller, amount, Vec::new())
         }
     }
 }
