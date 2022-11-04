@@ -1,6 +1,10 @@
 //! PSP22 Controller of an ERC20 EVM contract interoperability using XVM interface.
 #![cfg_attr(not(feature = "std"), no_std)]
 
+pub use self::psp22::{
+    Psp22,
+    Psp22Ref,
+};
 use ink_lang as ink;
 
 /// EVM ID (from astar runtime)

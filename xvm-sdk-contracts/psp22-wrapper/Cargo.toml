@@ -16,6 +16,7 @@ scale = { package = "parity-scale-codec", version = "3", default-features = fals
 scale-info = { version = "2", default-features = false, features = ["derive"], optional = true }
 
 xvm-sdk-helper = { path = "../../lib/xvm-helper", default-features = false }
+xvm-sdk-psp22-controller = { path = "../psp22-controller", default-features = false, features = ["ink-as-dependency"] }
 openbrush = { version = "2.2.0", default-features = false, features = ["psp22"] }
 
 [lib]
@@ -41,6 +42,7 @@ std = [
     "scale/std",
     "scale-info/std",
     "xvm-sdk-helper/std",
-    "openbrush/std"
+    "openbrush/std",
+    "xvm-sdk-psp22-controller/std",
 ]
 ink-as-dependency = []
