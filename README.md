@@ -42,7 +42,7 @@ HAve a look at PSP22 Wrapper for an example.
 
 ## Usage 
 
-##### Tray it local!
+##### Try it local!
 1. Build & run [Astar](https://github.com/AstarNetwork/Astar) in local `./target/release/astar-collator --dev --tmp`  
 2. Add [Test account](https://github.com/AstarNetwork/Astar/blob/de5b8db29794917ffab8fb0a4a7b2a9a52491452/bin/collator/src/local/chain_spec.rs#L61-L66) that is funded with native token to metamask .
 3. Using Remix deploys an ERC20 (or ERC721) using injected provider to Astar local & the test account
