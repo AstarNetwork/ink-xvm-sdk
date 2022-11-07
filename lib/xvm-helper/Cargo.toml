@@ -5,16 +5,16 @@ authors = ["Astar Network"]
 edition = "2021"
 
 [dependencies]
-ink_env = { version = "~3.3.0", default-features = false }
-ink_lang = { version = "~3.3.0", default-features = false }
-ink_prelude = { version = "~3.3.0", default-features = false }
+ink_env = { version = "3.4.0", default-features = false }
+ink_lang = { version = "3.4.0", default-features = false }
+ink_prelude = { version = "3.4.0", default-features = false }
 hex-literal = "0.3"
 ethabi = { git = "https://github.com/akru/ethabi", default-features = false }
 
 scale = { package = "parity-scale-codec", version = "3", default-features = false, features = ["derive"] }
 scale-info = { version = "2", default-features = false, features = ["derive"], optional = true }
 
-openbrush = { version = "2.2.0", default-features = false, features = ["psp22"] }
+openbrush = { tag = "v2.3.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false }
 
 [lib]
 name = "xvm_sdk_helper"
@@ -28,7 +28,6 @@ std = [
     "ink_lang/std",
     "ink_prelude/std",
     "scale/std",
-    "scale-info/std",
-    "openbrush/std"
+    "scale-info/std"
 ]
 ink-as-dependency = []

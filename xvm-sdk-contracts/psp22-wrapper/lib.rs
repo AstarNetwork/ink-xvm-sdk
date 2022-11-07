@@ -4,7 +4,6 @@
 #[openbrush::contract]
 pub mod my_psp22 {
     use ink_prelude::{
-        string::String,
         vec::Vec,
     };
     use ink_storage::traits::SpreadAllocate;
@@ -35,8 +34,8 @@ pub mod my_psp22 {
         #[ink(constructor)]
         pub fn new(version: u32, psp22_controller_hash: Hash, evm_contract_address: [u8; 20]) -> Self {
             ink_lang::codegen::initialize_contract(|instance: &mut Self| {
-                instance.metadata.name = Some(String::from("Wrapped PSP22"));
-                instance.metadata.symbol = Some(String::from("WPSP22"));
+                instance.metadata.name = Some("Wrapped PSP22".as_bytes().to_vec());
+                instance.metadata.symbol = Some("WPSP22".as_bytes().to_vec());
                 instance.metadata.decimals = 18;
                 instance.evm_address = evm_contract_address;
                 let salt = version.to_le_bytes();
@@ -62,8 +61,8 @@ pub mod my_psp22 {
             let caller = self.env().caller();
             let contract = self.env().account_id();
             XvmErc20::transfer(self.evm_address, contract, amount, Vec::new())
-                .map_err(|_| PSP22Error::Custom(String::from("transfer failed")))?;
-            self._mint(caller, amount)
+                .map_err(|_| PSP22Error::Custom("transfer failed".as_bytes().to_vec()))?;
+            self._mint_to(caller, amount)
         }
 
         #[ink(message)]
