@@ -52,11 +52,6 @@ pub mod my_psp22 {
         }
 
         #[ink(message)]
-        pub fn get_psp22_controller(&self) -> AccountId {
-            self.psp22_controller
-        }
-
-        #[ink(message)]
         pub fn deposit(&mut self, amount: Balance) -> Result<(), PSP22Error> {
             let caller = self.env().caller();
             let contract = self.env().account_id();

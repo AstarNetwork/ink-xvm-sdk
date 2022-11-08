@@ -2,8 +2,8 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
 pub use self::psp34::{
-    PSP34,
-    PSP34Ref,
+    PSP34Controller,
+    PSP34ControllerRef,
 };
 use ink_lang as ink;
 
@@ -50,11 +50,11 @@ mod psp34 {
     }
 
     #[ink(storage)]
-    pub struct PSP34 {
+    pub struct PSP34Controller {
         evm_address: [u8; 20],
     }
 
-    impl PSP34 {
+    impl PSP34Controller {
         #[ink(constructor)]
         pub fn new(evm_address: [u8; 20]) -> Self {
             Self { evm_address }
