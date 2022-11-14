@@ -18,6 +18,8 @@ scale-info = { version = "2", default-features = false, features = ["derive"], o
 xvm-sdk-helper = { path = "../../lib/xvm-helper", default-features = false }
 xvm-sdk-psp22-controller = { path = "../psp22-controller", default-features = false, features = ["ink-as-dependency"] }
 openbrush = { tag = "v2.3.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false, features = ["psp22"] }
+ethabi = { git = "https://github.com/akru/ethabi", default-features = false }
+hex-literal = "0.3"
 
 [lib]
 name = "xvm_sdk_psp22_wrapper"
