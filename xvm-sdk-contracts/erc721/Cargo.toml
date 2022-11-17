@@ -1,5 +1,5 @@
 [package]
-name = "xvm-sdk-erc20"
+name = "xvm-sdk-erc721"
 version = "0.1.0"
 authors = ["Astar Network"]
 edition = "2021"
@@ -17,10 +17,10 @@ hex-literal = "0.3"
 scale = { package = "parity-scale-codec", version = "3", default-features = false, features = ["derive"] }
 scale-info = { version = "2", default-features = false, features = ["derive"], optional = true }
 
-xvm-sdk = { path = "..", default-features = false }
+xvm-sdk = { path = "../../lib/xvm-environment", default-features = false }
 
 [lib]
-name = "xvm_sdk_erc20"
+name = "xvm_sdk_erc721"
 path = "lib.rs"
 crate-type = [
 	# Used for normal contract Wasm blobs.
