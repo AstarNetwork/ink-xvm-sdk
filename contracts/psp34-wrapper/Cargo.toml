@@ -16,7 +16,7 @@ ethabi = { git = "https://github.com/akru/ethabi", default-features = false }
 scale = { package = "parity-scale-codec", version = "3", default-features = false, features = ["derive"] }
 scale-info = { version = "2", default-features = false, features = ["derive"], optional = true }
 
-xvm-sdk-helper = { path = "../../lib/xvm-helper", default-features = false }
+xvm-helper = { path = "../../lib/helper", default-features = false }
 xvm-sdk-psp34-controller = { path = "../psp34-controller", default-features = false, features = ["ink-as-dependency"] }
 openbrush = { tag = "v2.3.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false, features = ["psp34"] }
 
@@ -42,8 +42,8 @@ std = [
     "ink_prelude/std",
     "scale/std",
     "scale-info/std",
-    "xvm-sdk-helper/std",
     "openbrush/std",
     "xvm-sdk-psp34-controller/std",
+    "xvm-helper/std"
 ]
 ink-as-dependency = []

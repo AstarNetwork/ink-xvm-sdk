@@ -41,8 +41,8 @@ Implementation of XVM chain extension added to a custom `XvmDefaultEnvironment`.
 2. Add it to your contract in ink! macro `#[ink::contract(env = xvm_sdk::XvmDefaultEnvironment)]`.   
 3. In your contract use it with `self.env().extension().xvm_call(..args)`.
 
-#### XVM helper
-This crate exposes `XvmErc20` struct that implements functions of ERC20 chain-extension.   
+#### XVM Builder
+This crate exposes `Xvm` struct that implements xvm_call with chain-extension builder from ink_env.   
 It makes it compatible with other custom environment like openbrush.   
 HAve a look at PSP22 Wrapper for an example.
 1. Import the crate in your Cargo.Toml   

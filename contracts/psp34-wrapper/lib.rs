@@ -13,11 +13,11 @@ pub mod psp34_wrapper {
         },
     };
     use openbrush::contracts::psp34::{PSP34Error, PSP34Ref};
-    use xvm_sdk_helper::XvmErc721;
     use xvm_sdk_psp34_controller::PSP34ControllerRef;
     use ethabi::ethereum_types::U256;
     use openbrush::contracts::psp34::Id;
     use ink_lang::ToAccountId;
+    use xvm_helper::XvmErc721;
 
     #[derive(Default, SpreadAllocate, Storage)]
     #[ink(storage)]

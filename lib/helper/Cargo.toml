@@ -1,21 +1,22 @@
 [package]
-name = "xvm-sdk-helper"
+name = "xvm-helper"
 version = "0.1.0"
 authors = ["Astar Network"]
 edition = "2021"
 
 [dependencies]
 ink_env = { version = "3.4.0", default-features = false }
-ink_lang = { version = "3.4.0", default-features = false }
 ink_prelude = { version = "3.4.0", default-features = false }
 
 scale = { package = "parity-scale-codec", version = "3", default-features = false, features = ["derive"] }
 scale-info = { version = "2", default-features = false, features = ["derive"], optional = true }
+xvm-builder = { path = "../xvm-builder" , default-features = false }
 
-openbrush = { tag = "v2.3.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false }
+hex-literal = "0.3"
+ethabi = { git = "https://github.com/akru/ethabi", default-features = false }
 
 [lib]
-name = "xvm_sdk_helper"
+name = "xvm_helper"
 path = "lib.rs"
 crate-type = ["rlib"]
 
@@ -23,9 +24,9 @@ crate-type = ["rlib"]
 default = ["std"]
 std = [
     "ink_env/std",
-    "ink_lang/std",
     "ink_prelude/std",
     "scale/std",
-    "scale-info/std"
+    "scale-info/std",
+    "xvm-builder/std"
 ]
 ink-as-dependency = []

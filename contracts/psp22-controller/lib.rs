@@ -10,7 +10,7 @@ use ink_lang as ink;
 /// EVM ID (from astar runtime)
 const EVM_ID: u8 = 0x0F;
 
-#[ink::contract(env = xvm_sdk::XvmDefaultEnvironment)]
+#[ink::contract(env = xvm_environment::XvmDefaultEnvironment)]
 mod psp22 {
     use ethabi::{
         ethereum_types::{

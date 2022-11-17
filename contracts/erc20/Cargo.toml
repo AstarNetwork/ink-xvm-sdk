@@ -1,5 +1,5 @@
 [package]
-name = "xvm-sdk-psp22-wrapper"
+name = "xvm-sdk-erc20"
 version = "0.1.0"
 authors = ["Astar Network"]
 edition = "2021"
@@ -11,22 +11,20 @@ ink_env = { version = "3.4.0", default-features = false }
 ink_storage = { version = "3.4.0", default-features = false }
 ink_lang = { version = "3.4.0", default-features = false }
 ink_prelude = { version = "3.4.0", default-features = false }
+ethabi = { git = "https://github.com/akru/ethabi", default-features = false }
+hex-literal = "0.3"
 
 scale = { package = "parity-scale-codec", version = "3", default-features = false, features = ["derive"] }
 scale-info = { version = "2", default-features = false, features = ["derive"], optional = true }
 
-xvm-sdk-helper = { path = "../../lib/xvm-helper", default-features = false }
-xvm-sdk-psp22-controller = { path = "../psp22-controller", default-features = false, features = ["ink-as-dependency"] }
-openbrush = { tag = "v2.3.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false, features = ["psp22"] }
-ethabi = { git = "https://github.com/akru/ethabi", default-features = false }
-hex-literal = "0.3"
+xvm-environment = { path = "../../lib/xvm-environment", default-features = false }
 
 [lib]
-name = "xvm_sdk_psp22_wrapper"
+name = "xvm_sdk_erc20"
 path = "lib.rs"
 crate-type = [
-    # Used for normal contract Wasm blobs.
-    "cdylib",
+	# Used for normal contract Wasm blobs.
+	"cdylib",
     # Used for ABI generation.
     "rlib",
 ]
@@ -34,17 +32,12 @@ crate-type = [
 [features]
 default = ["std"]
 std = [
-    "ink_primitives/std",
-    "ink_metadata",
     "ink_metadata/std",
     "ink_env/std",
     "ink_storage/std",
-    "ink_lang/std",
-    "ink_prelude/std",
+    "ink_primitives/std",
     "scale/std",
     "scale-info/std",
-    "xvm-sdk-helper/std",
-    "openbrush/std",
-    "xvm-sdk-psp22-controller/std",
+    "xvm-environment/std",
 ]
 ink-as-dependency = []

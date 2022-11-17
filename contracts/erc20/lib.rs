@@ -11,7 +11,7 @@ use ink_lang as ink;
 const EVM_ID: u8 = 0x0F;
 
 /// The EVM ERC20 delegation contract.
-#[ink::contract(env = xvm_sdk::XvmDefaultEnvironment)]
+#[ink::contract(env = xvm_environment::XvmDefaultEnvironment)]
 mod erc20 {
     // ======= IERC20.sol:IERC20 =======
     // Function signatures:

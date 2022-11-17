@@ -1,5 +1,5 @@
 [package]
-name = "xvm-sdk-erc20"
+name = "xvm-sdk-psp34-controller"
 version = "0.1.0"
 authors = ["Astar Network"]
 edition = "2021"
@@ -17,14 +17,14 @@ hex-literal = "0.3"
 scale = { package = "parity-scale-codec", version = "3", default-features = false, features = ["derive"] }
 scale-info = { version = "2", default-features = false, features = ["derive"], optional = true }
 
-xvm-sdk = { path = "../../lib/xvm-environment", default-features = false }
+xvm-environment = { path = "../../lib/xvm-environment", default-features = false }
 
 [lib]
-name = "xvm_sdk_erc20"
+name = "xvm_sdk_psp34_controller"
 path = "lib.rs"
 crate-type = [
-	# Used for normal contract Wasm blobs.
-	"cdylib",
+    # Used for normal contract Wasm blobs.
+    "cdylib",
     # Used for ABI generation.
     "rlib",
 ]
@@ -38,6 +38,6 @@ std = [
     "ink_primitives/std",
     "scale/std",
     "scale-info/std",
-    "xvm-sdk/std",
+    "xvm-environment/std",
 ]
 ink-as-dependency = []
