@@ -1,6 +1,6 @@
 [workspace]
 members = [
-    "xvm-sdk-contracts/**",
+    "contracts/**",
 ]
 exclude = [
     "lib/**",

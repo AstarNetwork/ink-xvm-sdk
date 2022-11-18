@@ -17,7 +17,7 @@ hex-literal = "0.3"
 scale = { package = "parity-scale-codec", version = "3", default-features = false, features = ["derive"] }
 scale-info = { version = "2", default-features = false, features = ["derive"], optional = true }
 
-xvm-sdk = { path = "../../lib/xvm-environment", default-features = false }
+xvm-environment = { path = "../../lib/xvm-environment", default-features = false }
 
 [lib]
 name = "xvm_sdk_psp22_controller"
@@ -38,6 +38,6 @@ std = [
     "ink_primitives/std",
     "scale/std",
     "scale-info/std",
-    "xvm-sdk/std",
+    "xvm-environment/std",
 ]
 ink-as-dependency = []
