@@ -1,31 +1,32 @@
 [package]
-name = "xvm-sdk"
+name = "xvm-helper"
 version = "0.1.0"
 authors = ["Astar Network"]
 edition = "2021"
 
 [dependencies]
 ink_env = { version = "3.4.0", default-features = false }
-ink_lang = { version = "3.4.0", default-features = false }
 ink_prelude = { version = "3.4.0", default-features = false }
 
 scale = { package = "parity-scale-codec", version = "3", default-features = false, features = ["derive"] }
 scale-info = { version = "2", default-features = false, features = ["derive"], optional = true }
+xvm-builder = { path = "../xvm-builder" , default-features = false }
+
+hex-literal = "0.3"
+ethabi = { git = "https://github.com/akru/ethabi", default-features = false }
 
 [lib]
-name = "xvm_sdk"
+name = "xvm_helper"
 path = "lib.rs"
-crate-type = [
-	# Used for normal contract Wasm blobs.
-	"cdylib",
-    # Used for ABI generation.
-    "rlib",
-]
+crate-type = ["rlib"]
 
 [features]
 default = ["std"]
 std = [
     "ink_env/std",
+    "ink_prelude/std",
     "scale/std",
     "scale-info/std",
+    "xvm-builder/std"
 ]
+ink-as-dependency = []

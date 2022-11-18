@@ -11,7 +11,7 @@ use ink_lang as ink;
 const EVM_ID: u8 = 0x0F;
 
 /// The EVM ERC721 delegation contract.
-#[ink::contract(env = xvm_sdk::XvmDefaultEnvironment)]
+#[ink::contract(env = xvm_environment::XvmDefaultEnvironment)]
 mod erc721 {
     const APPROVE_SELECTOR: [u8; 4] = hex!["095ea7b3"];
     const TRANSFER_FROM_SELECTOR: [u8; 4] = hex!["23b872dd"];
