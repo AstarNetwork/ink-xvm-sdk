@@ -59,4 +59,4 @@ Have a look at PSP22 Wrapper for an example.
 5. Deploy ink! contract with ERC20/ERC721 address from EVM.
 6. Play with it!
 
-Use [Hoon' address converter](https://hoonsubin.github.io/evm-substrate-address-converter/) 
+Use [Hoon's address converter](https://hoonsubin.github.io/evm-substrate-address-converter/) 
