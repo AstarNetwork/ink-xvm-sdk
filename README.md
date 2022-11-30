@@ -54,7 +54,7 @@ Have a look at PSP22 Wrapper for an example.
 ##### Try it local!
 1. Build & run [Astar](https://github.com/AstarNetwork/Astar) in local `./target/release/astar-collator --dev --tmp`  
 2. Add [Test account](https://github.com/AstarNetwork/Astar/blob/de5b8db29794917ffab8fb0a4a7b2a9a52491452/bin/collator/src/local/chain_spec.rs#L61-L66) that is funded with native token to metamask .
-3. Using Remix deploys an ERC20 (or ERC721 mint) using injected provider to Astar local & the test account.
+3. Using Remix IDE deploy an ERC20 (or ERC721 mint) using injected provider to Astar local & the test account.
 4. Transfer ERC20 or mint ERC721 token from test account to Alice H160.
 5. Deploy ink! contract with ERC20/ERC721 address from EVM.
 6. Play with it!
