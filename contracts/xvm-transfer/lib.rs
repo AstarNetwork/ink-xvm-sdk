@@ -1,10 +1,5 @@
 //! Contract for transferring ERC20 tokens from SS58 accounts to SS58 or H160 accounts.
 #![cfg_attr(not(feature = "std"), no_std)]
-
-pub use self::xvm_transfer::{
-    XvmTransfer,
-    XvmTransferRef,
-};
 use ink_lang as ink;
 
 /// EVM ID (from astar runtime)
