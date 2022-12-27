@@ -20,7 +20,7 @@ It implements `PSP22` standard, and thus can be used in any DEX/wallet supportin
 
 #### PSP22 Wrapper
 
-This implementation is a wrapper of an underlying `ERC20` on EVM. Interact with `H256` native substrate addresses.  
+This implementation is a wrapper of an underlying `ERC20` on EVM. Interact with `H256` native substrate addresses.
 As it implements wrapper pattern it has `deposit` & `withdraw` function and can be used as a bridgeless solution between WASM VM & EVM.
 It implements `PSP22` standard, thus can be used in any DEX/wallet supporting it.
 
@@ -41,7 +41,7 @@ It implements `PSP34` standard, and thus can be used in any DEX/wallet supportin
 
 #### XVM Transfer
 
-This implementation is a controller of an underlying `ERC20` on EVM. This is a universal contract where one of the parameters for the transfer function is the ERC20 contract address. This contract is used on [Astar Portal](https://portal.astar.network/).
+This implementation is a controller of an underlying `ERC20` on EVM. Interact with both `H256` native substrate and `H160` addresses. This is a universal contract where one of the parameters for the transfer function is the ERC20 contract address. This contract is used on [Astar Portal](https://portal.astar.network/).
 
 ## Library
 
