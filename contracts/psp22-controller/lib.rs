@@ -5,7 +5,6 @@ pub use self::psp22::{
     Psp22,
     Psp22Ref,
 };
-use ink_lang as ink;
 
 /// EVM ID (from astar runtime)
 const EVM_ID: u8 = 0x0F;
@@ -20,7 +19,7 @@ mod psp22 {
         Token,
     };
     use hex_literal::hex;
-    use ink_prelude::{
+    use ink::prelude::{
         string::{
             String,
             ToString,
@@ -131,7 +130,7 @@ mod psp22 {
         fn h160(from: &AccountId) -> H160 {
             let mut dest: H160 = [0; 20].into();
             dest.as_bytes_mut()
-                .copy_from_slice(&<ink_env::AccountId as AsRef<[u8]>>::as_ref(from)[..20]);
+                .copy_from_slice(&<AccountId as AsRef<[u8]>>::as_ref(from)[..20]);
             dest
         }
     }

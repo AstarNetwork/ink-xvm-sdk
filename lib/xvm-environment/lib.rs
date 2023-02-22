@@ -2,8 +2,9 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 use ink::{
     env::{
+        chain_extension::FromStatusCode,
         DefaultEnvironment,
-        Environment, chain_extension::FromStatusCode,
+        Environment,
     },
     prelude::vec::Vec,
 };

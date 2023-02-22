@@ -5,7 +5,6 @@ pub use self::psp34::{
     PSP34Controller,
     PSP34ControllerRef,
 };
-use ink_lang as ink;
 
 /// EVM ID (from astar runtime)
 const EVM_ID: u8 = 0x0F;
@@ -20,10 +19,8 @@ mod psp34 {
         Token,
     };
     use hex_literal::hex;
-    use ink_prelude::{
-        string::{
-            String,
-        },
+    use ink::prelude::{
+        string::String,
         vec::Vec,
     };
 
@@ -31,7 +28,7 @@ mod psp34 {
     const TRANSFER_FROM_SELECTOR: [u8; 4] = hex!["23b872dd"];
     const MINT_SELECTOR: [u8; 4] = hex!["40c10f19"];
 
-    #[derive(scale::Encode, scale::Decode,)]
+    #[derive(scale::Encode, scale::Decode)]
     #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
     pub enum Id {
         U8(u8),
@@ -61,7 +58,12 @@ mod psp34 {
         }
 
         #[ink(message, selector = 0x1932a8b0)]
-        pub fn approve(&mut self, operator: AccountId, id: Option<Id>, _approved: bool) -> Result<(), PSP34Error> {
+        pub fn approve(
+            &mut self,
+            operator: AccountId,
+            id: Option<Id>,
+            _approved: bool,
+        ) -> Result<(), PSP34Error> {
             if id.is_none() {
                 return Err(PSP34Error::Custom(String::from("Id should not be None")))
             }
@@ -77,9 +79,15 @@ mod psp34 {
         }
 
         #[ink(message, selector = 0x3128d61b)]
-        pub fn transfer(&mut self, to: AccountId, id: Id, _data: Vec<u8>) -> Result<(), PSP34Error> {
+        pub fn transfer(
+            &mut self,
+            to: AccountId,
+            id: Id,
+            _data: Vec<u8>,
+        ) -> Result<(), PSP34Error> {
             let caller = self.env().caller();
-            let encoded_input = Self::transfer_from_encode(Self::h160(&caller), Self::h160(&to), id.into());
+            let encoded_input =
+                Self::transfer_from_encode(Self::h160(&caller), Self::h160(&to), id.into());
             self.env()
                 .extension()
                 .xvm_call(
@@ -132,7 +140,7 @@ mod psp34 {
         fn h160(from: &AccountId) -> H160 {
             let mut dest: H160 = [0; 20].into();
             dest.as_bytes_mut()
-                .copy_from_slice(&<ink_env::AccountId as AsRef<[u8]>>::as_ref(from)[..20]);
+                .copy_from_slice(&<AccountId as AsRef<[u8]>>::as_ref(from)[..20]);
             dest
         }
     }
