@@ -1,6 +1,5 @@
 //! Contract for transferring ERC20 tokens from SS58 accounts to SS58 or H160 accounts.
 #![cfg_attr(not(feature = "std"), no_std)]
-use ink_lang as ink;
 
 /// EVM ID (from astar runtime)
 const EVM_ID: u8 = 0x0f;
@@ -15,7 +14,7 @@ mod xvm_transfer {
         Token,
     };
     use hex_literal::hex;
-    use ink_prelude::vec::Vec;
+    use ink::prelude::vec::Vec;
 
     const TRANSFER_SELECTOR: [u8; 4] = hex!["a9059cbb"];
 
@@ -33,7 +32,7 @@ mod xvm_transfer {
                 To::WASM(a) => {
                     let mut dest: H160 = [0; 20].into();
                     dest.as_bytes_mut()
-                        .copy_from_slice(&<ink_env::AccountId as AsRef<[u8]>>::as_ref(&a)[..20]);
+                        .copy_from_slice(&<AccountId as AsRef<[u8]>>::as_ref(&a)[..20]);
                     dest
                 }
             }
