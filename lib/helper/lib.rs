@@ -1,8 +1,5 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
-use xvm_builder::*;
-use ink_prelude::vec::Vec;
-use ink_env::AccountId;
 use ethabi::{
     ethereum_types::{
         H160,
@@ -11,7 +8,12 @@ use ethabi::{
     Token,
 };
 use hex_literal::hex;
-type Balance = <ink_env::DefaultEnvironment as ink_env::Environment>::Balance;
+use ink::{
+    prelude::vec::Vec,
+    primitives::AccountId,
+};
+use xvm_builder::*;
+type Balance = <ink::env::DefaultEnvironment as ink::env::Environment>::Balance;
 
 const EVM_ID: u8 = 0x0F;
 const APPROVE_SELECTOR: [u8; 4] = hex!["095ea7b3"];
@@ -22,7 +24,11 @@ const MINT_SELECTOR: [u8; 4] = hex!["40c10f19"];
 pub struct XvmErc20;
 
 impl XvmErc20 {
-    pub fn approve(evm_contract_address: [u8; 20], spender: AccountId, value: Balance) -> Result<(), XvmError> {
+    pub fn approve(
+        evm_contract_address: [u8; 20],
+        spender: AccountId,
+        value: Balance,
+    ) -> Result<(), XvmError> {
         let encoded_input = Self::approve_encode(h160(&spender), value.into());
         Xvm::xvm_call(
             EVM_ID,
@@ -37,8 +43,7 @@ impl XvmErc20 {
         value: Balance,
         _data: Vec<u8>,
     ) -> Result<(), XvmError> {
-        let encoded_input =
-            Self::transfer_encode(h160(&to), value.into());
+        let encoded_input = Self::transfer_encode(h160(&to), value.into());
         Xvm::xvm_call(
             EVM_ID,
             Vec::from(evm_contract_address.as_ref()),
@@ -53,8 +58,7 @@ impl XvmErc20 {
         value: Balance,
         _data: Vec<u8>,
     ) -> Result<(), XvmError> {
-        let encoded_input =
-            Self::transfer_from_encode(h160(&from), h160(&to), value.into());
+        let encoded_input = Self::transfer_from_encode(h160(&from), h160(&to), value.into());
         Xvm::xvm_call(
             EVM_ID,
             Vec::from(evm_contract_address.as_ref()),
@@ -87,9 +91,13 @@ impl XvmErc20 {
 pub struct XvmErc721;
 
 impl XvmErc721 {
-    pub fn transfer_from(evm_contract_address: [u8; 20], from: AccountId, to: AccountId, id: U256) -> Result<(), XvmError> {
-        let encoded_input =
-            Self::transfer_from_encode(h160(&from), h160(&to), id);
+    pub fn transfer_from(
+        evm_contract_address: [u8; 20],
+        from: AccountId,
+        to: AccountId,
+        id: U256,
+    ) -> Result<(), XvmError> {
+        let encoded_input = Self::transfer_from_encode(h160(&from), h160(&to), id);
         Xvm::xvm_call(
             EVM_ID,
             Vec::from(evm_contract_address.as_ref()),
@@ -97,7 +105,11 @@ impl XvmErc721 {
         )
     }
 
-    pub fn approve(evm_contract_address: [u8; 20], spender: AccountId, id: U256) -> Result<(), XvmError> {
+    pub fn approve(
+        evm_contract_address: [u8; 20],
+        spender: AccountId,
+        id: U256,
+    ) -> Result<(), XvmError> {
         let encoded_input = Self::approve_encode(h160(&spender), id);
         Xvm::xvm_call(
             EVM_ID,
@@ -117,11 +129,7 @@ impl XvmErc721 {
 
     fn transfer_from_encode(from: H160, to: H160, id: U256) -> Vec<u8> {
         let mut encoded = TRANSFER_FROM_SELECTOR.to_vec();
-        let input = [
-            Token::Address(from),
-            Token::Address(to),
-            Token::Uint(id),
-        ];
+        let input = [Token::Address(from), Token::Address(to), Token::Uint(id)];
         encoded.extend(&ethabi::encode(&input));
         encoded
     }
@@ -144,6 +152,6 @@ impl XvmErc721 {
 fn h160(from: &AccountId) -> H160 {
     let mut dest: H160 = [0; 20].into();
     dest.as_bytes_mut()
-        .copy_from_slice(&<ink_env::AccountId as AsRef<[u8]>>::as_ref(from)[..20]);
+        .copy_from_slice(&<AccountId as AsRef<[u8]>>::as_ref(from)[..20]);
     dest
 }
