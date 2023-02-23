@@ -3,12 +3,19 @@
 
 #[openbrush::contract]
 pub mod my_psp22 {
-    use ink_lang::ToAccountId;
-    use ink_prelude::vec::Vec;
-    use ink_storage::traits::SpreadAllocate;
+    use ink::{
+        prelude::{
+            format,
+            vec::Vec,
+        },
+        ToAccountId,
+    };
     use openbrush::{
         contracts::{
-            psp22::extensions::metadata::*,
+            psp22::{
+                extensions::metadata::*,
+                PSP22Error,
+            },
             traits::psp22::PSP22Ref,
         },
         traits::Storage,
@@ -17,7 +24,7 @@ pub mod my_psp22 {
     use xvm_sdk_psp22_controller::Psp22Ref;
 
     #[ink(storage)]
-    #[derive(Default, SpreadAllocate, Storage)]
+    #[derive(Storage)]
     pub struct PSP22Wrapper {
         #[storage_field]
         psp22: psp22::Data,
@@ -36,25 +43,32 @@ pub mod my_psp22 {
             version: u32,
             psp22_controller_hash: Hash,
             evm_contract_address: [u8; 20],
-        ) -> Self {
-            ink_lang::codegen::initialize_contract(|instance: &mut Self| {
-                instance.metadata.name = Some("Wrapped PSP22".as_bytes().to_vec());
-                instance.metadata.symbol = Some("WPSP22".as_bytes().to_vec());
-                instance.metadata.decimals = 18;
-                instance.evm_address = evm_contract_address;
-                let salt = version.to_le_bytes();
-                let psp22 = Psp22Ref::new(evm_contract_address.into())
-                    .endowment(0)
-                    .code_hash(psp22_controller_hash)
-                    .salt_bytes(salt)
-                    .instantiate()
-                    .unwrap_or_else(|error| {
-                        panic!(
-                            "failed at instantiating the psp22 controller contract: {:?}",
-                            error
-                        )
-                    });
-                instance.psp22_controller = psp22.to_account_id();
+        ) -> Result<Self, PSP22Error> {
+            let salt = version.to_le_bytes();
+            let psp22 = Psp22Ref::new(evm_contract_address.into())
+                .endowment(0)
+                .code_hash(psp22_controller_hash)
+                .salt_bytes(salt)
+                .try_instantiate()
+                .map_err(|error| {
+                    PSP22Error::Custom(
+                        format!("Failed to Instantiate: {:?}", error)
+                            .as_bytes()
+                            .to_vec(),
+                    )
+                })?
+                .map_err(|_| PSP22Error::Custom(Vec::<u8>::from("Failed to Instantiate")))?;
+
+            Ok(Self {
+                psp22: Default::default(),
+                psp22_controller: psp22.to_account_id(),
+                evm_address: evm_contract_address,
+                metadata: Data {
+                    name: Some("Wrapped PSP22".as_bytes().to_vec()),
+                    symbol: Some("WPSP22".as_bytes().to_vec()),
+                    decimals: 18,
+                    _reserved: None,
+                },
             })
         }
 

@@ -5,7 +5,6 @@ pub use self::erc721::{
     Erc721,
     Erc721Ref,
 };
-use ink_lang as ink;
 
 /// EVM ID (from astar runtime)
 const EVM_ID: u8 = 0x0F;
@@ -25,7 +24,7 @@ mod erc721 {
         Token,
     };
     use hex_literal::hex;
-    use ink_prelude::vec::Vec;
+    use ink::prelude::vec::Vec;
 
     #[ink(storage)]
     pub struct Erc721 {
