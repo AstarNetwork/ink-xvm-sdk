@@ -72,14 +72,8 @@ pub mod psp34_wrapper {
                 evm_address: evm_contract_address,
                 psp34_controller: psp34.to_account_id(),
             };
-
-            let name_key: Vec<u8> = String::from("name");
-            let symbol_key: Vec<u8> = String::from("symbol");
-            instance._set_attribute(id.clone(), name_key, name);
-            instance._set_attribute(id, symbol_key, symbol);
-            instance.evm_address = evm_contract_address;
-            instance.psp34_controller = psp34.to_account_id();
-
+            instance._set_attribute(id.clone(), String::from("name"), name);
+            instance._set_attribute(id, String::from("symbol"), symbol);
             Ok(instance)
         }
 

@@ -20,7 +20,6 @@ mod psp22 {
     };
     use hex_literal::hex;
     use ink::prelude::{
-        format,
         string::String,
         vec::Vec,
     };
