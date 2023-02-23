@@ -20,6 +20,7 @@ impl Xvm {
 #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
 pub enum XvmError {
     FailXvmCall,
+    UnknownStatusCode,
 }
 
 impl FromStatusCode for XvmError {
@@ -27,13 +28,7 @@ impl FromStatusCode for XvmError {
         match status_code {
             0 => Ok(()),
             1 => Err(Self::FailXvmCall),
-            _ => panic!("encountered unknown status code"),
+            _ => Err(Self::UnknownStatusCode),
         }
-    }
-}
-
-impl From<scale::Error> for XvmError {
-    fn from(_: scale::Error) -> Self {
-        panic!("encountered unexpected invalid SCALE encoding")
     }
 }
