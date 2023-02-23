@@ -57,9 +57,7 @@ pub mod my_psp22 {
                             .to_vec(),
                     )
                 })?
-                .map_err(|_| {
-                    PSP22Error::Custom(Vec::<u8>::from("Failed to Instantiate"))
-                })?;
+                .map_err(|_| PSP22Error::Custom(Vec::<u8>::from("Failed to Instantiate")))?;
 
             let mut instance = Self {
                 psp22: Default::default(),

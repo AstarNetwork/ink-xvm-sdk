@@ -64,13 +64,7 @@ pub mod psp34_wrapper {
                             .to_vec(),
                     )
                 })?
-                .map_err(|lang_error| {
-                    PSP34Error::Custom(
-                        format!("Failed to Instantiate: {:?}", lang_error)
-                            .as_bytes()
-                            .to_vec(),
-                    )
-                })?;
+                .map_err(|_| PSP34Error::Custom(Vec::<u8>::from("Failed to Instantiate")))?;
 
             let mut instance = Self {
                 psp34: Default::default(),
