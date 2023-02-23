@@ -98,12 +98,6 @@ mod psp22 {
                 .map_err(|_| PSP22Error::Custom(String::from("transfer_from failed")))
         }
 
-        /// Helper function to get H160 address of the 32 bytes accountId
-        #[ink(message)]
-        pub fn to_h160_address(&self, from: AccountId) -> String {
-            format!("{:?}", Self::h160(&from))
-        }
-
         fn approve_encode(to: H160, value: U256) -> Vec<u8> {
             let mut encoded = APPROVE_SELECTOR.to_vec();
             let input = [Token::Address(to), Token::Uint(value)];
