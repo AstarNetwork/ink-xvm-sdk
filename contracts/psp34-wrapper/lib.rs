@@ -72,7 +72,7 @@ pub mod psp34_wrapper {
                     )
                 })?;
 
-            let mut _instance = Self {
+            let mut instance = Self {
                 psp34: Default::default(),
                 metadata: Default::default(),
                 evm_address: evm_contract_address,
@@ -81,12 +81,12 @@ pub mod psp34_wrapper {
 
             let name_key: Vec<u8> = String::from("name");
             let symbol_key: Vec<u8> = String::from("symbol");
-            _instance._set_attribute(id.clone(), name_key, name);
-            _instance._set_attribute(id, symbol_key, symbol);
-            _instance.evm_address = evm_contract_address;
-            _instance.psp34_controller = psp34.to_account_id();
+            instance._set_attribute(id.clone(), name_key, name);
+            instance._set_attribute(id, symbol_key, symbol);
+            instance.evm_address = evm_contract_address;
+            instance.psp34_controller = psp34.to_account_id();
 
-            Ok(_instance)
+            Ok(instance)
         }
 
         #[ink(message)]

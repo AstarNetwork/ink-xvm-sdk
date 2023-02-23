@@ -57,26 +57,22 @@ pub mod my_psp22 {
                             .to_vec(),
                     )
                 })?
-                .map_err(|lang_error| {
-                    PSP22Error::Custom(
-                        format!("Failed to Instantiate: {:?}", lang_error)
-                            .as_bytes()
-                            .to_vec(),
-                    )
+                .map_err(|_| {
+                    PSP22Error::Custom(Vec::<u8>::from("Failed to Instantiate"))
                 })?;
 
-            let mut _instance = Self {
+            let mut instance = Self {
                 psp22: Default::default(),
                 metadata: Default::default(),
                 evm_address: Default::default(),
                 psp22_controller: psp22.to_account_id(),
             };
-            _instance.metadata.name = Some("Wrapped PSP22".as_bytes().to_vec());
-            _instance.metadata.symbol = Some("WPSP22".as_bytes().to_vec());
-            _instance.metadata.decimals = 18;
-            _instance.evm_address = evm_contract_address;
-            _instance.psp22_controller = psp22.to_account_id();
-            Ok(_instance)
+            instance.metadata.name = Some("Wrapped PSP22".as_bytes().to_vec());
+            instance.metadata.symbol = Some("WPSP22".as_bytes().to_vec());
+            instance.metadata.decimals = 18;
+            instance.evm_address = evm_contract_address;
+            instance.psp22_controller = psp22.to_account_id();
+            Ok(instance)
         }
 
         #[ink(message)]
