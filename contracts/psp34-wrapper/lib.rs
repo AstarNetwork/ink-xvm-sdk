@@ -3,24 +3,31 @@
 
 #[openbrush::contract]
 pub mod psp34_wrapper {
-    use ink_prelude::vec::Vec;
-    use ink_storage::traits::SpreadAllocate;
+    use ethabi::ethereum_types::U256;
+    use ink::{
+        prelude::{
+            format,
+            vec::Vec,
+        },
+        ToAccountId,
+    };
     use openbrush::{
-        contracts::psp34::extensions::metadata::*,
+        contracts::psp34::{
+            extensions::metadata::*,
+            Id,
+            PSP34Error,
+            PSP34Ref,
+        },
         traits::{
             Storage,
             String,
         },
     };
-    use openbrush::contracts::psp34::{PSP34Error, PSP34Ref};
-    use xvm_sdk_psp34_controller::PSP34ControllerRef;
-    use ethabi::ethereum_types::U256;
-    use openbrush::contracts::psp34::Id;
-    use ink_lang::ToAccountId;
     use xvm_helper::XvmErc721;
+    use xvm_sdk_psp34_controller::PSP34ControllerRef;
 
-    #[derive(Default, SpreadAllocate, Storage)]
     #[ink(storage)]
+    #[derive(Storage)]
     pub struct PSP34Wrapper {
         #[storage_field]
         psp34: psp34::Data,
@@ -36,24 +43,38 @@ pub mod psp34_wrapper {
 
     impl PSP34Wrapper {
         #[ink(constructor)]
-        pub fn new(version: u32, psp34_controller_hash: Hash, evm_contract_address: [u8; 20], id: Id, name: String, symbol: String) -> Self {
-            ink_lang::codegen::initialize_contract(|instance: &mut Self| {
-                let name_key: Vec<u8> = String::from("name");
-                let symbol_key: Vec<u8> = String::from("symbol");
-                instance._set_attribute(id.clone(), name_key, name);
-                instance._set_attribute(id, symbol_key, symbol);
-                instance.evm_address = evm_contract_address;
-                let salt = version.to_le_bytes();
-                let psp34 = PSP34ControllerRef::new(evm_contract_address.into())
-                    .endowment(0)
-                    .code_hash(psp34_controller_hash)
-                    .salt_bytes(salt)
-                    .instantiate()
-                    .unwrap_or_else(|error| {
-                        panic!("failed at instantiating the psp34 controller contract: {:?}", error)
-                    });
-                instance.psp34_controller = psp34.to_account_id();
-            })
+        pub fn new(
+            version: u32,
+            psp34_controller_hash: Hash,
+            evm_contract_address: [u8; 20],
+            id: Id,
+            name: String,
+            symbol: String,
+        ) -> Result<Self, PSP34Error> {
+            let salt = version.to_le_bytes();
+            let psp34 = PSP34ControllerRef::new(evm_contract_address.into())
+                .endowment(0)
+                .code_hash(psp34_controller_hash)
+                .salt_bytes(salt)
+                .try_instantiate()
+                .map_err(|error| {
+                    PSP34Error::Custom(
+                        format!("Failed to Instantiate: {:?}", error)
+                            .as_bytes()
+                            .to_vec(),
+                    )
+                })?
+                .map_err(|_| PSP34Error::Custom(Vec::<u8>::from("Failed to Instantiate")))?;
+
+            let mut instance = Self {
+                psp34: Default::default(),
+                metadata: Default::default(),
+                evm_address: evm_contract_address,
+                psp34_controller: psp34.to_account_id(),
+            };
+            instance._set_attribute(id.clone(), String::from("name"), name);
+            instance._set_attribute(id, String::from("symbol"), symbol);
+            Ok(instance)
         }
 
         #[ink(message)]
