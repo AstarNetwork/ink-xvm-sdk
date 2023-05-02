@@ -24,6 +24,7 @@ mod erc20 {
     const APPROVE_SELECTOR: [u8; 4] = hex!["095ea7b3"];
     const TRANSFER_SELECTOR: [u8; 4] = hex!["a9059cbb"];
     const TRANSFER_FROM_SELECTOR: [u8; 4] = hex!["23b872dd"];
+    const BALANCE_OF_SELECTOR: [u8; 4] = hex!["70a08231"];
 
     use ethabi::{
         ethereum_types::{
@@ -89,6 +90,19 @@ mod erc20 {
                 .is_ok()
         }
 
+        #[ink(message)]
+        pub fn balance_of(&self, of: [u8; 20]) -> Balance {
+            let encoded_input = Self::balance_of_encode(of.into());
+            let output: Vec<u8> =  self.env()
+                .extension()
+                .xvm_call(
+                    super::EVM_ID,
+                    Vec::from(self.evm_address.as_ref()),
+                    encoded_input,
+                ).unwrap();
+            u128::from_be_bytes(output[output.len() - 16..output.len()].try_into().unwrap()).into()
+        }
+
         fn approve_encode(to: H160, value: U256) -> Vec<u8> {
             let mut encoded = APPROVE_SELECTOR.to_vec();
             let input = [Token::Address(to), Token::Uint(value)];
@@ -106,6 +120,13 @@ mod erc20 {
         fn transfer_from_encode(from: H160, to: H160, value: U256) -> Vec<u8> {
             let mut encoded = TRANSFER_FROM_SELECTOR.to_vec();
             let input = [Token::Address(from), Token::Address(to), Token::Uint(value)];
+            encoded.extend(&ethabi::encode(&input));
+            encoded
+        }
+
+        fn balance_of_encode(of: H160) -> Vec<u8> {
+            let mut encoded = BALANCE_OF_SELECTOR.to_vec();
+            let input = [Token::Address(of)];
             encoded.extend(&ethabi::encode(&input));
             encoded
         }

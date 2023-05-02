@@ -18,11 +18,11 @@ pub trait XvmExtension {
     type ErrorCode = XvmError;
 
     #[ink(extension = 0x00010001)]
-    fn xvm_call(vm_id: u8, target: Vec<u8>, input: Vec<u8>) -> Result<()>;
+    fn xvm_call(vm_id: u8, target: Vec<u8>, input: Vec<u8>) -> Result<Vec<u8>>;
 }
 
 /// XVM chain extension errors.
-#[derive(scale::Encode, scale::Decode)]
+#[derive(Debug, scale::Encode, scale::Decode)]
 #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
 pub enum XvmError {
     FailXvmCall,
