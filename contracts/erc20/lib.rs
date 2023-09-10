@@ -47,6 +47,35 @@ mod erc20 {
             Self { evm_address }
         }
 
+        /// Get `totalSupply` from an ERC20 contract.
+        #[ink(message)]
+        pub fn total_supply(&self) -> u128 {
+            const SELECTOR: [u8; 4] = hex!["18160ddd"];
+
+            let mut encoded = SELECTOR.to_vec();
+            let input = [];
+            encoded.extend(&ethabi::encode(&input));
+
+            let result = self.env().extension().xvm_call(
+                super::EVM_ID,
+                Vec::from(self.evm_address.as_ref()),
+                encoded,
+            );
+
+            ink::env::debug_println!("xvm_call result: {:?}", result);
+
+            if let Ok([Token::Uint(int)]) = ethabi::decode(
+                &[ethabi::ParamType::Uint(256)],
+                &result.expect("xvm_call failed"),
+            )
+            .as_deref()
+            {
+                int.as_u128()
+            } else {
+                panic!("failed to decode xvm_call result")
+            }
+        }
+
         /// Send `approve` call to ERC20 contract.
         #[ink(message)]
         pub fn approve(&mut self, to: [u8; 20], value: u128) -> bool {
