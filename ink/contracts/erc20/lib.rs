@@ -6,7 +6,7 @@ pub use self::erc20::{
     Erc20Ref,
 };
 
-/// EVM ID (from astar runtime)
+/// EVM ID (from Astar runtime)
 const EVM_ID: u8 = 0x0F;
 
 /// The EVM ERC20 delegation contract.
@@ -60,6 +60,7 @@ mod erc20 {
                 super::EVM_ID,
                 Vec::from(self.evm_address.as_ref()),
                 encoded,
+                0u128
             );
 
             ink::env::debug_println!("xvm_call result: {:?}", result);
@@ -86,6 +87,7 @@ mod erc20 {
                     super::EVM_ID,
                     Vec::from(self.evm_address.as_ref()),
                     encoded_input,
+                    0u128
                 )
                 .is_ok()
         }
@@ -100,6 +102,7 @@ mod erc20 {
                     super::EVM_ID,
                     Vec::from(self.evm_address.as_ref()),
                     encoded_input,
+                    0_u128
                 )
                 .is_ok()
         }
@@ -114,6 +117,7 @@ mod erc20 {
                     super::EVM_ID,
                     Vec::from(self.evm_address.as_ref()),
                     encoded_input,
+                    0_128
                 )
                 .is_ok()
         }

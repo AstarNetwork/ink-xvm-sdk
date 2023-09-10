@@ -47,6 +47,7 @@ mod erc721 {
                     super::EVM_ID,
                     Vec::from(self.evm_address.as_ref()),
                     encoded_input,
+                    0u128
                 )
                 .is_ok()
         }
@@ -60,6 +61,7 @@ mod erc721 {
                     super::EVM_ID,
                     Vec::from(self.evm_address.as_ref()),
                     encoded_input,
+                    0u128
                 )
                 .is_ok()
         }
@@ -73,6 +75,7 @@ mod erc721 {
                     super::EVM_ID,
                     Vec::from(self.evm_address.as_ref()),
                     encoded_input,
+                    0u128
                 )
                 .is_ok()
         }

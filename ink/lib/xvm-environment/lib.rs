@@ -18,22 +18,33 @@ pub trait XvmExtension {
     type ErrorCode = XvmError;
 
     #[ink(extension = 0x00010001)]
-    fn xvm_call(vm_id: u8, target: Vec<u8>, input: Vec<u8>) -> Result<Vec<u8>>;
+    fn xvm_call(vm_id: u8, target: Vec<u8>, input: Vec<u8>, value: u128) -> Result<Vec<u8>>;
 }
 
 /// XVM chain extension errors.
 #[derive(scale::Encode, scale::Decode, Debug)]
 #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
 pub enum XvmError {
-    FailXvmCall,
+    InvalidVmId,
+    SameVmCallNotAllowed,
+    InvalidTarget,
+    InputTooLarge,
+    BadOrigin,
+    ExecutionFailed,
+    UnknownStatusCode,
 }
 
 impl FromStatusCode for XvmError {
     fn from_status_code(status_code: u32) -> core::result::Result<(), Self> {
         match status_code {
             0 => Ok(()),
-            1 => Err(Self::FailXvmCall),
-            _ => panic!("encountered unknown status code"),
+            1 => Err(Self::InvalidVmId),
+            2 => Err(Self::SameVmCallNotAllowed),
+            3 => Err(Self::InvalidTarget),
+            4 => Err(Self::InputTooLarge),
+            5 => Err(Self::BadOrigin),
+            6 => Err(Self::ExecutionFailed),
+            _ => Err(Self::UnknownStatusCode)
         }
     }
 }

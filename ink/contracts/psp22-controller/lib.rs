@@ -55,8 +55,10 @@ mod psp22 {
                     super::EVM_ID,
                     Vec::from(self.evm_address.as_ref()),
                     encoded_input,
+                    0u128
                 )
-                .map_err(|_| PSP22Error::Custom(String::from("approve failed")))
+                .map_err(|_| PSP22Error::Custom(String::from("approve failed")))?;
+            Ok(())
         }
 
         #[ink(message, selector = 0xdb20f9f5)]
@@ -73,8 +75,10 @@ mod psp22 {
                     super::EVM_ID,
                     Vec::from(self.evm_address.as_ref()),
                     encoded_input,
+                    0u128
                 )
-                .map_err(|_| PSP22Error::Custom(String::from("transfer failed")))
+                .map_err(|_| PSP22Error::Custom(String::from("transfer failed")))?;
+            Ok(())
         }
 
         #[ink(message, selector = 0x54b3c76e)]
@@ -93,8 +97,10 @@ mod psp22 {
                     super::EVM_ID,
                     Vec::from(self.evm_address.as_ref()),
                     encoded_input,
+                    0u128
                 )
-                .map_err(|_| PSP22Error::Custom(String::from("transfer_from failed")))
+                .map_err(|_| PSP22Error::Custom(String::from("transfer_from failed")))?;
+            Ok(())
         }
 
         fn approve_encode(to: H160, value: U256) -> Vec<u8> {

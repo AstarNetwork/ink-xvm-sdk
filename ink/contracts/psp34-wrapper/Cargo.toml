@@ -5,19 +5,19 @@ authors = ["Astar Network"]
 edition = "2021"
 
 [dependencies]
-ink = { version = "4.0.0", default-features = false }
+ink = { version = "4.3", default-features = false }
 ethabi = { git = "https://github.com/akru/ethabi", default-features = false }
 scale = { package = "parity-scale-codec", version = "3", default-features = false, features = [
     "derive",
 ] }
-scale-info = { version = "2", default-features = false, features = [
+scale-info = { version = "2.5", default-features = false, features = [
     "derive",
 ], optional = true }
 xvm-helper = { path = "../../lib/helper", default-features = false }
 xvm-sdk-psp34-controller = { path = "../psp34-controller", default-features = false, features = [
     "ink-as-dependency",
 ] }
-openbrush = { tag = "3.0.0", git = "https://github.com/727-Ventures/openbrush-contracts", default-features = false, features = [
+openbrush = { git = "https://github.com/Brushfam/openbrush-contracts", default-features = false, features = [
     "psp34",
 ] }
 
