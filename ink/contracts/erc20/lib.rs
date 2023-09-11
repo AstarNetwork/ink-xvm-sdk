@@ -1,10 +1,5 @@
 //! ERC20 EVM contract interoperability using XVM interface.
-#![cfg_attr(not(feature = "std"), no_std)]
-
-pub use self::erc20::{
-    Erc20,
-    Erc20Ref,
-};
+#![cfg_attr(not(feature = "std"), no_std, no_main)]
 
 /// EVM ID (from Astar runtime)
 const EVM_ID: u8 = 0x0F;

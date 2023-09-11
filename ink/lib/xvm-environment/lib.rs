@@ -1,5 +1,5 @@
 //! The XVM public interface for Ink! smart contracts.
-#![cfg_attr(not(feature = "std"), no_std)]
+#![cfg_attr(not(feature = "std"), no_std, no_main)]
 use ink::{
     env::{
         chain_extension::FromStatusCode,
@@ -9,16 +9,14 @@ use ink::{
     prelude::vec::Vec,
 };
 
-/// General result type.
-pub type Result<T> = core::result::Result<T, XvmError>;
 
 /// The XVM chain extension adapter.
 #[ink::chain_extension]
 pub trait XvmExtension {
     type ErrorCode = XvmError;
 
-    #[ink(extension = 0x00010001)]
-    fn xvm_call(vm_id: u8, target: Vec<u8>, input: Vec<u8>, value: u128) -> Result<Vec<u8>>;
+    #[ink(extension = 0x00010001, handle_status = false)]
+    fn xvm_call(vm_id: u8, target: Vec<u8>, input: Vec<u8>, value: u128) -> Result<Vec<u8>, XvmError>;
 }
 
 /// XVM chain extension errors.
@@ -49,6 +47,12 @@ impl FromStatusCode for XvmError {
     }
 }
 
+impl From<scale::Error> for XvmError {
+    fn from(_: scale::Error) -> Self {
+        Self::UnknownStatusCode
+    }
+}
+
 /// XVM default contract environment.
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
@@ -64,10 +68,4 @@ impl Environment for XvmDefaultEnvironment {
     type Timestamp = <DefaultEnvironment as Environment>::Timestamp;
 
     type ChainExtension = XvmExtension;
-}
-
-impl From<scale::Error> for XvmError {
-    fn from(_: scale::Error) -> Self {
-        panic!("encountered unexpected invalid SCALE encoding")
-    }
 }
