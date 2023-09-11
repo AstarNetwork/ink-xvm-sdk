@@ -15,10 +15,8 @@ scale-info = { version = "2.5", default-features = false, features = [
 ], optional = true }
 
 xvm-helper = { path = "../../lib/helper", default-features = false }
-xvm-sdk-psp22-controller = { path = "../psp22-controller", default-features = false, features = [
-    "ink-as-dependency",
-] }
-openbrush = { git = "https://github.com/Brushfam/openbrush-contracts", default-features = false, features = [
+
+openbrush = { version = "4.0.0-beta", git = "https://github.com/Brushfam/openbrush-contracts", default-features = false, features = [
     "psp22",
 ] }
 
@@ -33,6 +31,5 @@ std = [
     "scale-info/std",
     "xvm-helper/std",
     "openbrush/std",
-    "xvm-sdk-psp22-controller/std",
 ]
 ink-as-dependency = []

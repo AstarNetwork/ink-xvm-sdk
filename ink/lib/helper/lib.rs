@@ -28,14 +28,13 @@ impl XvmErc20 {
         evm_contract_address: [u8; 20],
         spender: AccountId,
         amount: Balance,
-        value: u128
     ) -> Result<(), XvmError> {
         let encoded_input = Self::approve_encode(h160(&spender), amount.into());
         Xvm::xvm_call(
             EVM_ID,
             Vec::from(evm_contract_address.as_ref()),
             encoded_input,
-            value
+            0u128
         )?;
         Ok(())
     }
@@ -44,7 +43,6 @@ impl XvmErc20 {
         evm_contract_address: [u8; 20],
         to: AccountId,
         amount: Balance,
-        value: u128,
         _data: Vec<u8>,
     ) -> Result<(), XvmError> {
         let encoded_input = Self::transfer_encode(h160(&to), amount.into());
@@ -52,7 +50,7 @@ impl XvmErc20 {
             EVM_ID,
             Vec::from(evm_contract_address.as_ref()),
             encoded_input,
-            value
+            0u128
         )?;
         Ok(())
     }
@@ -62,7 +60,6 @@ impl XvmErc20 {
         from: AccountId,
         to: AccountId,
         amount: Balance,
-        value: u128,
         _data: Vec<u8>,
     ) -> Result<(), XvmError> {
         let encoded_input = Self::transfer_from_encode(h160(&from), h160(&to), amount.into());
@@ -70,7 +67,7 @@ impl XvmErc20 {
             EVM_ID,
             Vec::from(evm_contract_address.as_ref()),
             encoded_input,
-            value
+            0u128
         )?;
         Ok(())
     }
@@ -105,14 +102,13 @@ impl XvmErc721 {
         from: AccountId,
         to: AccountId,
         id: U256,
-        value: u128
     ) -> Result<(), XvmError> {
         let encoded_input = Self::transfer_from_encode(h160(&from), h160(&to), id);
         Xvm::xvm_call(
             EVM_ID,
             Vec::from(evm_contract_address.as_ref()),
             encoded_input,
-            value
+            0u128
         )?;
         Ok(())
     }
@@ -120,26 +116,25 @@ impl XvmErc721 {
     pub fn approve(
         evm_contract_address: [u8; 20],
         spender: AccountId,
-        id: U256,
-        value: u128
+        id: U256
     ) -> Result<(), XvmError> {
         let encoded_input = Self::approve_encode(h160(&spender), id);
         Xvm::xvm_call(
             EVM_ID,
             Vec::from(evm_contract_address.as_ref()),
             encoded_input,
-            value
+            0u128
         )?;
         Ok(())
     }
 
-    pub fn mint(evm_contract_address: [u8; 20], to: AccountId, id: U256, value: u128) -> Result<(), XvmError> {
+    pub fn mint(evm_contract_address: [u8; 20], to: AccountId, id: U256) -> Result<(), XvmError> {
         let encoded_input = Self::mint_encode(h160(&to), id.into());
         Xvm::xvm_call(
             EVM_ID,
             Vec::from(evm_contract_address.as_ref()),
             encoded_input,
-            value
+            0u128
         )?;
         Ok(())
     }

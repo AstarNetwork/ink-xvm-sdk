@@ -1,16 +1,11 @@
 //! PSP34 Controller of an ERC721 EVM contract interoperability using XVM interface.
-#![cfg_attr(not(feature = "std"), no_std)]
-
-pub use self::psp34::{
-    PSP34Controller,
-    PSP34ControllerRef,
-};
+#![cfg_attr(not(feature = "std"), no_std, no_main)]
 
 /// EVM ID (from astar runtime)
 const EVM_ID: u8 = 0x0F;
 
 #[ink::contract(env = xvm_environment::XvmDefaultEnvironment)]
-mod psp34 {
+mod psp34_controller {
     use ethabi::{
         ethereum_types::{
             H160,
@@ -22,6 +17,7 @@ mod psp34 {
     use ink::prelude::{
         string::String,
         vec::Vec,
+        borrow::ToOwned
     };
 
     const APPROVE_SELECTOR: [u8; 4] = hex!["095ea7b3"];
@@ -65,7 +61,7 @@ mod psp34 {
             _approved: bool,
         ) -> Result<(), PSP34Error> {
             if id.is_none() {
-                return Err(PSP34Error::Custom(String::from("Id should not be None")))
+                return Err(PSP34Error::Custom("Id should not be None".to_owned()))
             }
             let encoded_input = Self::approve_encode(Self::h160(&operator), id.unwrap().into());
             self.env()
@@ -74,8 +70,10 @@ mod psp34 {
                     super::EVM_ID,
                     Vec::from(self.evm_address.as_ref()),
                     encoded_input,
+                    0u128
                 )
-                .map_err(|_| PSP34Error::Custom(String::from("approve failed")))
+                .map_err(|_| PSP34Error::Custom("approve failed".to_owned()))?;
+            Ok(())
         }
 
         #[ink(message, selector = 0x3128d61b)]
@@ -94,8 +92,10 @@ mod psp34 {
                     super::EVM_ID,
                     Vec::from(self.evm_address.as_ref()),
                     encoded_input,
+                    0u128
                 )
-                .map_err(|_| PSP34Error::Custom(String::from("transfer failed")))
+                .map_err(|_| PSP34Error::Custom("transfer failed".to_owned()))?;
+            Ok(())
         }
 
         // This is not part of PSP34 so there is no standard selector
@@ -108,8 +108,10 @@ mod psp34 {
                     super::EVM_ID,
                     Vec::from(self.evm_address.as_ref()),
                     encoded_input,
+                    0u128
                 )
-                .map_err(|_| PSP34Error::Custom(String::from("mint failed")))
+                .map_err(|_| PSP34Error::Custom("mint failed".to_owned()))?;
+            Ok(())
         }
 
         fn transfer_from_encode(from: H160, to: H160, token_id: U256) -> Vec<u8> {

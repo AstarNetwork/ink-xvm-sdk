@@ -14,9 +14,7 @@ scale-info = { version = "2.5", default-features = false, features = [
     "derive",
 ], optional = true }
 xvm-helper = { path = "../../lib/helper", default-features = false }
-xvm-sdk-psp34-controller = { path = "../psp34-controller", default-features = false, features = [
-    "ink-as-dependency",
-] }
+
 openbrush = { git = "https://github.com/Brushfam/openbrush-contracts", default-features = false, features = [
     "psp34",
 ] }
@@ -32,7 +30,6 @@ std = [
     "scale/std",
     "scale-info/std",
     "openbrush/std",
-    "xvm-sdk-psp34-controller/std",
     "xvm-helper/std",
 ]
 ink-as-dependency = []

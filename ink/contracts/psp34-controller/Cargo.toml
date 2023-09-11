@@ -7,7 +7,7 @@ edition = "2021"
 [dependencies]
 ink = { version = "4.3", default-features = false }
 ethabi = { git = "https://github.com/akru/ethabi", default-features = false }
-hex-literal = "0.3"
+hex-literal = "0.4.1"
 
 scale = { package = "parity-scale-codec", version = "3", default-features = false, features = [
     "derive",

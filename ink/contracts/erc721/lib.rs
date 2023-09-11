@@ -1,10 +1,5 @@
 //! ERC721 EVM contract interoperability using XVM interface.
-#![cfg_attr(not(feature = "std"), no_std)]
-
-pub use self::erc721::{
-    Erc721,
-    Erc721Ref,
-};
+#![cfg_attr(not(feature = "std"), no_std, no_main)]
 
 /// EVM ID (from astar runtime)
 const EVM_ID: u8 = 0x0F;

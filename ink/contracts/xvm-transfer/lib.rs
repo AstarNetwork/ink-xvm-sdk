@@ -1,7 +1,7 @@
 //! Contract for transferring ERC20 tokens from SS58 accounts to SS58 or H160 accounts.
-#![cfg_attr(not(feature = "std"), no_std)]
+#![cfg_attr(not(feature = "std"), no_std, no_main)]
 
-/// EVM ID (from astar runtime)
+/// EVM ID (from Astar runtime)
 const EVM_ID: u8 = 0x0f;
 
 #[ink::contract(env = xvm_environment::XvmDefaultEnvironment)]
@@ -57,6 +57,7 @@ mod xvm_transfer {
                     super::EVM_ID,
                     Vec::from(erc20_address.as_ref()),
                     encoded_input,
+                    0u128
                 )
                 .is_ok()
         }

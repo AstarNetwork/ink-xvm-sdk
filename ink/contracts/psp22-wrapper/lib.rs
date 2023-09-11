@@ -2,13 +2,8 @@
 
 #[openbrush::implementation(PSP22, PSP22Metadata)]
 #[openbrush::contract]
-pub mod my_psp22 {
-    use ink::{
-        prelude::{
-            format,
-        },
-        ToAccountId,
-    };
+pub mod psp22_wrapper {
+    use ink::prelude::borrow::ToOwned;
     use openbrush::traits::Storage;
     use xvm_helper::*;
 
@@ -28,13 +23,10 @@ pub mod my_psp22 {
             evm_contract_address: [u8; 20],
         ) -> Self {
             let mut instance = Self::default();
-
-            instance.metadata.name.set(&Some(String::from("Wrapped PSP22")));
-            instance.metadata.symbol.set(&Some(String::from("WPSP22")));
+            instance.metadata.name.set(&Some("Wrapped PSP22".to_owned()));
+            instance.metadata.symbol.set(&Some("WPSP22".to_owned()));
             instance.metadata.decimals.set(&18);
-
             instance.evm_address = evm_contract_address;
-
             instance
         }
 
@@ -42,17 +34,17 @@ pub mod my_psp22 {
         pub fn deposit(&mut self, amount: Balance) -> Result<(), PSP22Error> {
             let caller = self.env().caller();
             let contract = self.env().account_id();
-            XvmErc20::transfer_from(self.evm_address, contract, caller, amount, 0u128, Vec::new())
-                .map_err(|_| PSP22Error::Custom(Stri"transfer failed".to_string()))?;
-            self._mint_to(caller, amount)
+            XvmErc20::transfer_from(self.evm_address, contract, caller, amount, Vec::new())
+                .map_err(|_| PSP22Error::Custom("transfer failed".to_owned()))?;
+            psp22::Internal::_mint_to(self, caller, amount)
         }
 
         #[ink(message)]
         pub fn withdraw(&mut self, amount: Balance) -> Result<(), PSP22Error> {
             let caller = self.env().caller();
-            self._burn_from(caller, amount)?;
-            XvmErc20::transfer(self.evm_address, caller, amount, 0u128, Vec::new())
-                .map_err(|_| PSP22Error::Custom("transfer failed".as_bytes().to_vec()))
+            psp22::Internal::_burn_from(self, caller, amount)?;
+            XvmErc20::transfer(self.evm_address, caller, amount, Vec::new())
+                .map_err(|_| PSP22Error::Custom("transfer failed".to_owned()))
         }
     }
 }

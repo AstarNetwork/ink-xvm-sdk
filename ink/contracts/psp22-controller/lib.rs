@@ -1,16 +1,11 @@
 //! PSP22 Controller of an ERC20 EVM contract interoperability using XVM interface.
-#![cfg_attr(not(feature = "std"), no_std)]
-
-pub use self::psp22::{
-    Psp22,
-    Psp22Ref,
-};
+#![cfg_attr(not(feature = "std"), no_std, no_main)]
 
 /// EVM ID (from astar runtime)
 const EVM_ID: u8 = 0x0F;
 
 #[ink::contract(env = xvm_environment::XvmDefaultEnvironment)]
-mod psp22 {
+mod psp22_controller {
     use ethabi::{
         ethereum_types::{
             H160,
