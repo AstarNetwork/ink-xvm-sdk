@@ -19,6 +19,7 @@ mod erc20 {
     const APPROVE_SELECTOR: [u8; 4] = hex!["095ea7b3"];
     const TRANSFER_SELECTOR: [u8; 4] = hex!["a9059cbb"];
     const TRANSFER_FROM_SELECTOR: [u8; 4] = hex!["23b872dd"];
+    const BALANCE_OF_SELECTOR: [u8; 4] = hex!["70a08231"];
 
     use ethabi::{
         ethereum_types::{
@@ -65,6 +66,53 @@ mod erc20 {
                 &result.expect("xvm_call failed"),
             )
             .as_deref()
+            {
+                int.as_u128()
+            } else {
+                panic!("failed to decode xvm_call result")
+            }
+        }
+
+        /// Get `balanceOf` from an ERC20 contract.
+        #[ink(message)]
+        pub fn balance_of_account_id(&self, from: AccountId) -> u128 {
+            let result = self.env().extension().xvm_call(
+                super::EVM_ID,
+                Vec::from(self.evm_address.as_ref()),
+                Self::balance_of_encode(Self::h160(&from)),
+                0u128
+            );
+
+            ink::env::debug_println!("xvm_call result: {:?}", result);
+
+            if let Ok([Token::Uint(int)]) = ethabi::decode(
+                &[ethabi::ParamType::Uint(256)],
+                &result.expect("xvm_call failed"),
+            )
+                .as_deref()
+            {
+                int.as_u128()
+            } else {
+                panic!("failed to decode xvm_call result")
+            }
+        }
+
+        #[ink(message)]
+        pub fn balance_of(&self, from: [u8; 20]) -> u128 {
+            let result = self.env().extension().xvm_call(
+                super::EVM_ID,
+                Vec::from(self.evm_address.as_ref()),
+                Self::balance_of_encode(from.into()),
+                0u128
+            );
+
+            ink::env::debug_println!("xvm_call result: {:?}", result);
+
+            if let Ok([Token::Uint(int)]) = ethabi::decode(
+                &[ethabi::ParamType::Uint(256)],
+                &result.expect("xvm_call failed"),
+            )
+                .as_deref()
             {
                 int.as_u128()
             } else {
@@ -136,6 +184,20 @@ mod erc20 {
             let input = [Token::Address(from), Token::Address(to), Token::Uint(value)];
             encoded.extend(&ethabi::encode(&input));
             encoded
+        }
+
+        fn balance_of_encode(from: H160) -> Vec<u8> {
+            let mut encoded = BALANCE_OF_SELECTOR.to_vec();
+            let input = [Token::Address(from)];
+            encoded.extend(&ethabi::encode(&input));
+            encoded
+        }
+
+        fn h160(from: &AccountId) -> H160 {
+            let mut dest: H160 = [0; 20].into();
+            dest.as_bytes_mut()
+                .copy_from_slice(&<AccountId as AsRef<[u8]>>::as_ref(from)[..20]);
+            dest
         }
     }
 }
