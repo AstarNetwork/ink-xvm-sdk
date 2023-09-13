@@ -4,9 +4,8 @@ import {HardhatEthersSigner} from "@nomicfoundation/hardhat-ethers/src/signers";
 import { ApiPromise, Keyring, WsProvider } from "@polkadot/api";
 import {expect} from "chai";
 import { KeyringPair } from "@polkadot/keyring/types";
-import {hexToU8a} from "@polkadot/util/hex/toU8a";
+import {hexToU8a, u8aToHex} from "@polkadot/util";
 import {transferNative} from "./helper";
-import {Wallet} from "ethers";
 import { CodePromise } from '@polkadot/api-contract';
 import { readFile } from "node:fs/promises";
 
@@ -21,22 +20,23 @@ before("Setup env", async function () {
     const wsProvider = new WsProvider("ws://127.0.0.1:9944");
     api = await ApiPromise.create({ provider: wsProvider });
 
-    const keyring = new Keyring({ type: "ethereum", ss58Format: 5 });
+    const keyring = new Keyring({ type: "ecdsa", ss58Format: 5 });
     alice = keyring.addFromSeed(hexToU8a("0x9e963df48eb2aeb329ff7a03991ac20a93130e619130a8431ce02bbee2b0a4ea"));
     console.log("ADDRESS ALICE SUB", alice.address.toString())
 
+    const alice_h160 = u8aToHex(polkadotCryptoUtils.addressToEvm(alice.address, true));
     const provider = ethers.getDefaultProvider("https://127.0.0.1:9944");
-    signer = await ethers.getSigner(alice.address);
+    signer = await ethers.getSigner(alice_h160);
     console.log("ADDRESS ALICE EVM", signer.address.toString())
 
-    //Transfer Native Token to Fund address²
+    //Transfer Native Token to Fund address
     const keyringSS58 = new Keyring({ type: "sr25519", ss58Format: 5 });
     const aliceSS58 = keyringSS58.addFromUri("//Alice");
     alith32 = polkadotCryptoUtils.evmToAddress(
         signer.address , 5
     );
     console.log("ADDRESS ALICE32", alith32.toString())
-    await transferNative(api, alith32, aliceSS58)
+    await transferNative(api, alice_h160, aliceSS58)
 
     // Deploy ERC20
     erc20Contract = await ethers.getContractFactory("Token");
