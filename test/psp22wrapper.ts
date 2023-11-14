@@ -20,23 +20,20 @@ before("Setup env", async function () {
     const wsProvider = new WsProvider("ws://127.0.0.1:9944");
     api = await ApiPromise.create({ provider: wsProvider });
 
-    const keyring = new Keyring({ type: "ecdsa", ss58Format: 5 });
-    alice = keyring.addFromSeed(hexToU8a("0x9e963df48eb2aeb329ff7a03991ac20a93130e619130a8431ce02bbee2b0a4ea"));
+    const keyring = new Keyring({ type: "sr25519", ss58Format: 5 });
+    alice = keyring.addFromUri("//Alice");
     console.log("ADDRESS ALICE SUB", alice.address.toString())
 
-    const alice_h160 = u8aToHex(polkadotCryptoUtils.addressToEvm(alice.address, true));
-    const provider = ethers.getDefaultProvider("https://127.0.0.1:9944");
-    signer = await ethers.getSigner(alice_h160);
+    signer = await ethers.getSigner("0xaaafB3972B05630fCceE866eC69CdADd9baC2771");
     console.log("ADDRESS ALICE EVM", signer.address.toString())
 
     //Transfer Native Token to Fund address
-    const keyringSS58 = new Keyring({ type: "sr25519", ss58Format: 5 });
-    const aliceSS58 = keyringSS58.addFromUri("//Alice");
+    const alice_h160 = u8aToHex(polkadotCryptoUtils.addressToEvm(alice.address, true));
     alith32 = polkadotCryptoUtils.evmToAddress(
         signer.address , 5
     );
     console.log("ADDRESS ALICE32", alith32.toString())
-    await transferNative(api, alice_h160, aliceSS58)
+    await transferNative(api, alice_h160, alice)
 
     // Deploy ERC20
     erc20Contract = await ethers.getContractFactory("Token");
@@ -50,11 +47,14 @@ before("Setup env", async function () {
     const wasm = compiledContract.source?.wasm;
 
     const psp22Wrapper = new CodePromise(api, abi, wasm);
-    const tx = psp22Wrapper.tx.new({}, erc20ContractAddress)
+
+    const gasLimit = 100000n * 1000000n;
+    const tx = psp22Wrapper.tx.new({gasLimit, storageDepositLimit: null}, erc20ContractAddress)
     let address;
-    const unsub = await tx.signAndSend(alice, ({ contract, status }) => {
+    const unsub = await tx.signAndSend(alice, {nonce: -1}, ({ contract, status }) => {
         if (status.isInBlock || status.isFinalized) {
             address = contract.address.toString();
+            console.log(address)
             unsub();
         }
     });

@@ -15,7 +15,7 @@ scale-info = { version = "2.5", default-features = false, features = [
 ], optional = true }
 xvm-helper = { path = "../../lib/helper", default-features = false }
 
-openbrush = { git = "https://github.com/Brushfam/openbrush-contracts", default-features = false, features = [
+openbrush = { tag = "4.0.0", git = "https://github.com/Brushfam/openbrush-contracts", default-features = false, features = [
     "psp34",
 ] }
 

@@ -17,10 +17,14 @@ xvm-builder = { path = "../xvm-builder", default-features = false }
 hex-literal = "0.4.1"
 ethabi = { git = "https://github.com/akru/ethabi", default-features = false }
 
+au-ce-getters = { path = "../au-ce", default-features = false }
+
+sp-core = { version = "25.0.0", default-features = false }
+
 [lib]
 path = "lib.rs"
 
 [features]
 default = ["std"]
-std = ["ink/std", "scale/std", "scale-info/std", "xvm-builder/std"]
+std = ["ink/std", "scale/std", "scale-info/std", "xvm-builder/std", "au-ce-getters/std", "sp-core/std"]
 ink-as-dependency = []

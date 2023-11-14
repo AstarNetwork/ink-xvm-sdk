@@ -16,7 +16,9 @@ scale-info = { version = "2.5", default-features = false, features = [
 
 xvm-helper = { path = "../../lib/helper", default-features = false }
 
-openbrush = { version = "4.0.0-beta", git = "https://github.com/Brushfam/openbrush-contracts", default-features = false, features = [
+au-ce-getters = { path = "../../lib/au-ce", default-features = false }
+
+openbrush = { tag = "4.0.0", git = "https://github.com/Brushfam/openbrush-contracts", default-features = false, features = [
     "psp22",
 ] }
 
@@ -31,5 +33,6 @@ std = [
     "scale-info/std",
     "xvm-helper/std",
     "openbrush/std",
+    "au-ce-getters/std"
 ]
 ink-as-dependency = []

@@ -13,6 +13,7 @@ use ink::{
     primitives::AccountId,
 };
 use xvm_builder::*;
+use au_ce_getters::UAExtension;
 type Balance = <ink::env::DefaultEnvironment as ink::env::Environment>::Balance;
 
 const EVM_ID: u8 = 0x0F;
@@ -62,7 +63,10 @@ impl XvmErc20 {
         amount: Balance,
         _data: Vec<u8>,
     ) -> Result<(), XvmError> {
-        let encoded_input = Self::transfer_from_encode(h160(&from), h160(&to), amount.into());
+        // Use the Account Unification Mapped address of the 'from' (caller)
+        // So the check for allowance will be on the AU mapped address
+        let from_h160 = UAExtension::to_h160(from).ok_or(XvmError::AccountNotMapped)?;
+        let encoded_input = Self::transfer_from_encode(H160::from_slice(from_h160.as_bytes()), h160(&to), amount.into());
         Xvm::xvm_call(
             EVM_ID,
             Vec::from(evm_contract_address.as_ref()),
