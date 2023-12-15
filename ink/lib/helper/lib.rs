@@ -107,7 +107,10 @@ impl XvmErc721 {
         to: AccountId,
         id: U256,
     ) -> Result<(), XvmError> {
-        let encoded_input = Self::transfer_from_encode(h160(&from), h160(&to), id);
+        // Use the Account Unification Mapped address of the 'from' (caller)
+        // So the check for allowance will be on the AU mapped address
+        let from_h160 = UAExtension::to_h160(from).ok_or(XvmError::AccountNotMapped)?;
+        let encoded_input = Self::transfer_from_encode(H160::from_slice(from_h160.as_bytes()), h160(&to), id);
         Xvm::xvm_call(
             EVM_ID,
             Vec::from(evm_contract_address.as_ref()),

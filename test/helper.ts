@@ -81,7 +81,7 @@ export async function contractCall(api: ApiPromise, contract: ContractPromise, t
             gasLimit,
             storageDepositLimit: null
         },
-        '10000000000000000'
+        ...params
     )
 
     if (result.isErr) {
@@ -111,7 +111,7 @@ export async function contractCall(api: ApiPromise, contract: ContractPromise, t
             gasLimit: estimatedGas,
             storageDepositLimit: null,
         },
-        params
+        ...params
     )
         .signAndSend(signer, (res) => {
             if (res.status.isFinalized) {
