@@ -6,8 +6,9 @@
     "@nomicfoundation/hardhat-network-helpers": "^1.0.0",
     "@nomicfoundation/hardhat-toolbox": "^3.0.0",
     "@nomicfoundation/hardhat-verify": "^1.0.0",
-    "@polkadot/api": "^10.9.1",
-    "@polkadot/api-contract": "^10.9.1",
+    "@polkadot/api": "^10.11.1",
+    "@polkadot/api-contract": "^10.11.1",
+    "@polkadot/types": "^10.11.1",
     "@typechain/ethers-v6": "^0.4.0",
     "@typechain/hardhat": "^8.0.0",
     "@types/chai": "^4.2.0",
@@ -30,10 +31,11 @@
   },
   "scripts": {
     "build": "hardhat compile",
-    "test": "npx hardhat test ./test/psp22wrapper.ts --network local"
+    "test": "npx hardhat test ./test/psp22wrapper.ts --network local",
+    "build:ink": "cargo contract build --manifest-path ink/contracts/psp22-wrapper/Cargo.toml"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.9.3",
-    "@polkadot/util-crypto": "^12.4.2"
+    "@polkadot/util-crypto": "^12.6.1"
   }
 }

@@ -34,7 +34,7 @@ pub mod psp22_wrapper {
         pub fn deposit(&mut self, amount: Balance) -> Result<(), PSP22Error> {
             let caller = self.env().caller();
             let contract = self.env().account_id();
-            XvmErc20::transfer_from(self.evm_address, contract, caller, amount, Vec::new())
+            XvmErc20::transfer_from(self.evm_address, caller, contract, amount, Vec::new())
                 .map_err(|_| PSP22Error::Custom("transfer failed".to_owned()))?;
             psp22::Internal::_mint_to(self, caller, amount)
         }
