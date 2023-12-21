@@ -27,7 +27,7 @@ const config: HardhatUserConfig = {
       url: "https://shibuya.public.blastapi.io",
       chainId: 81,
       gas: 10000000, // tx gas limit
-      accounts: [process.env.ACCOUNT_PRIVATE_KEY as string],
+      accounts: [process.env.ACCOUNT_PRIVATE_KEY_EVM as string],
     }
   },
   paths: {

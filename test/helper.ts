@@ -16,12 +16,17 @@ export async function transferNative(api: ApiPromise, to: any, alice: KeyringPai
 
 export async function claimEvmAddress(api: ApiPromise, signer: any, chainId: bigint, alice: KeyringPair) {
     const signature = await buildSignature(signer, alice.publicKey, api, chainId)
+    let finish = false;
     const unsub = await api.tx.unifiedAccounts.claimEvmAddress(signer.address, signature)
         .signAndSend(alice, {nonce: -1}, ({status}) => {
             if (status.isFinalized) {
+                finish = true;
                 unsub();
             }
         });
+    while (!finish) {
+        await waitFor(1);
+    }
 }
 
 export async function deployContract(api: ApiPromise, deployer: KeyringPair, erc20ContractAddress: string, contractRaw: string) {

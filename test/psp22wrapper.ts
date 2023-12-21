@@ -1,17 +1,16 @@
 import * as polkadotCryptoUtils from "@polkadot/util-crypto";
+import {blake2AsU8a, decodeAddress} from "@polkadot/util-crypto";
 import {ethers} from "hardhat";
 import {HardhatEthersSigner} from "@nomicfoundation/hardhat-ethers/src/signers";
 import {ApiPromise, Keyring, WsProvider} from "@polkadot/api";
 import {KeyringPair} from "@polkadot/keyring/types";
-import {u8aToHex, u8aConcat} from "@polkadot/util";
+import {u8aConcat, u8aToHex} from "@polkadot/util";
 import {claimEvmAddress, contractCall, DECIMALS, deployContract, transferNative} from "./helper";
 import {readFile} from "node:fs/promises";
-import {CodePromise, ContractPromise} from "@polkadot/api-contract/promise";
+import {ContractPromise} from "@polkadot/api-contract/promise";
 import {expect} from "chai";
 import BN from 'bn.js';
-import {blake2AsU8a, decodeAddress} from "@polkadot/util-crypto";
-import {WeightV2} from "@polkadot/types/interfaces";
-import { H160 } from '@polkadot/types/interfaces';
+import {H160, WeightV2} from "@polkadot/types/interfaces";
 
 describe("PSP22Wrapper Tests", function () {
     let api: ApiPromise;
@@ -27,6 +26,7 @@ describe("PSP22Wrapper Tests", function () {
 
     beforeEach("Setup env", async function () {
         const keyring = new Keyring({type: "sr25519", ss58Format: 5});
+
         const {chainId} = await ethers.provider.getNetwork();
         if (chainId == 4369) {
             console.log("Running on local")
@@ -42,30 +42,6 @@ describe("PSP22Wrapper Tests", function () {
 
         api = await ApiPromise.create({provider: wsProvider});
 
-        const { data: balance } = await api.query.system.account(bob.address);
-        if (balance.free.toBigInt() < 5n * DECIMALS) {
-            console.log("Funding Bob SS58:", bob.address)
-            await transferNative(api, bob.address, alice)
-        }
-
-        const bobUnifiedAddress = await api.query.unifiedAccounts.nativeToEvm<H160>(bob.address)
-        if (bobUnifiedAddress.toString() !== '') {
-            console.log(bobUnifiedAddress.toString())
-            bobH160 = bobUnifiedAddress
-        } else {
-            const addr = u8aConcat('evm:', decodeAddress(bob.address, false))
-            bobH160 = u8aToHex(blake2AsU8a(addr, 256).subarray(0, 20))
-            const bob_account_id = polkadotCryptoUtils.evmToAddress(
-                bobH160 , 5
-            );
-            console.log("ADDRESS BOB EVM DERIVATE", bob_account_id)
-            const { data: balanceEvm } = await api.query.system.account(bob_account_id);
-            if (balanceEvm.free.toBigInt() < 5n * DECIMALS) {
-                console.log("Funding Bob EVM:", bob_account_id)
-                await transferNative(api, bob_account_id, alice)
-            }
-        }
-
         gasLimit = api.registry.createType(
             'WeightV2',
             {
@@ -73,33 +49,49 @@ describe("PSP22Wrapper Tests", function () {
                 proofSize: 600_000,
             });
 
+        // Fund Bob Substrate Address
+        const {data: balance} = await api.query.system.account(bob.address);
+        if (balance.free.toBigInt() < 5n * DECIMALS) {
+            console.log("Funding Bob SS58:", bob.address)
+            await transferNative(api, bob.address, alice)
+        }
 
-/*        //Fund Bob
-        await transferNative(api, bob.address, alice)*/
-
-        console.log("ADDRESS BOB EVM", bobH160)
-        console.log("ADDRESS BOB SUB", bob.address)
-        console.log("ADDRESS ALICE SUB", alice.address.toString())
+        // Get Bob EVM Address
+        // If it has been unified, use the unified address (it should have been funded)
+        // if not get the default address and fund it if needed
+        const bobUnifiedAddress = await api.query.unifiedAccounts.nativeToEvm<H160>(bob.address)
+        if (bobUnifiedAddress.toString() !== '') {
+            bobH160 = bobUnifiedAddress.toString()
+        } else {
+            const addr = u8aConcat('evm:', decodeAddress(bob.address, false))
+            bobH160 = u8aToHex(blake2AsU8a(addr, 256).subarray(0, 20))
+            const bob_account_id = polkadotCryptoUtils.evmToAddress(
+                bobH160, 5
+            );
+            const {data: balanceEvm} = await api.query.system.account(bob_account_id);
+            if (balanceEvm.free.toBigInt() < 5n * DECIMALS) {
+                console.log("Funding Bob EVM:", bob_account_id)
+                await transferNative(api, bob_account_id, alice)
+            }
+        }
 
         let signers = await ethers.getSigners();
         signer = signers[0]
-        console.log("ADDRESS ALICE EVM", signer.address.toString())
 
-        // Unify the two addresses
-        const unifiedAddress = await api.query.unifiedAccounts.nativeToEvm(alice.address.toString())
-        if (unifiedAddress.toString().toLowerCase() != signer.address.toString().toLowerCase()) {
+        console.log("ADDRESS BOB EVM", bobH160)
+        console.log("ADDRESS BOB SUBSTRATE", bob.address)
+        console.log("ADDRESS ALICE EVM", signer.address.toString())
+        console.log("ADDRESS ALICE SUB", alice.address.toString())
+
+        // Unify Alice EVM and Alice Substrate
+        const aliceUnifiedAddress = await api.query.unifiedAccounts.nativeToEvm(alice.address.toString())
+        if (aliceUnifiedAddress.toString() === '') {
             await claimEvmAddress(api, signer, chainId, alice)
         }
 
-        // read Json file
-        const TokenContract = JSON.parse(await readFile("./artifacts/solidity/test-contracts/erc20.sol/TokenTKN.json"));
-
-/*        const Token = new ethers.ContractFactory(TokenContract.abi, TokenContract.bytecode, signer);
-       erc20Contract = new ethers.Contract('0xDc9Ce02A0d440D2d4a2DcF25150f0a45BE9f6FbA', TokenContract.abi, signer);*/
-
+        // Deploy ERC20 Contract
         erc20Contract = await ethers.deployContract("TokenTKN");
         await erc20Contract.waitForDeployment();
-
         const erc20ContractAddress = await erc20Contract.getAddress()
         console.log("ERC20 Contract deployed to:", erc20ContractAddress);
 
@@ -117,14 +109,15 @@ describe("PSP22Wrapper Tests", function () {
     });
 
     it("Deposit works", async function () {
+        // Assert - Alice balance of ERC20
+        const aliceBalance = await erc20Contract.connect(signer).balanceOf(signer.address);
+        expect(aliceBalance).to.equal('1000000000000000000000');
+
         // Arrange - Approve spending of ERC20 tokens
         const transaction = await erc20Contract.connect(signer).approve(psp22_h160, "1000000000000000000000000", {
             gasLimit: 400000
         });
         await transaction.wait()
-
-        const aliceBalance = await erc20Contract.connect(signer).balanceOf(signer.address);
-        expect(aliceBalance).to.equal('1000000000000000000000');
 
         // Act -  Deposit ERC20 tokens - PSP22 tokens gets minted
         await contractCall(api, psp22Contract, 'deposit', ['100000000000000000000'], alice);
@@ -134,9 +127,12 @@ describe("PSP22Wrapper Tests", function () {
             gasLimit,
             storageDepositLimit: null
         }, alice.address)).output?.toHuman()?.Ok.replace(/,/g, '')).to.equal(new BN('100000000000000000000').toString());
+
         // Assert - Alice balance is 0
-        const aliceBalance2 = await erc20Contract.balanceOf(signer);
-        expect(aliceBalance2).to.equal('900000000000000000000');
+        expect(await erc20Contract.balanceOf(signer.address)).to.equal('900000000000000000000');
+
+        // Assert - PSP222 contract has ERC20 tokens
+        expect(await erc20Contract.balanceOf(psp22_h160)).to.equal('100000000000000000000');
     });
 
     it("Deposit Transfer Withdraw works", async function () {
@@ -165,8 +161,7 @@ describe("PSP22Wrapper Tests", function () {
         }, bob.address)).output?.toHuman()?.Ok.replace(/,/g, '')).to.equal(new BN('100000000000000000000').toString());
 
         // Assert - PSP222 contract has ERC20 tokens
-        const psp22Balance = await erc20Contract.connect(signer).balanceOf(psp22_h160);
-        expect(psp22Balance).to.equal('100000000000000000000');
+        expect(await erc20Contract.balanceOf(psp22_h160)).to.equal('100000000000000000000');
 
         // Act - Bob withdraws ERC20 tokens
         await contractCall(api, psp22Contract, 'withdraw', ['100000000000000000000'], bob);
@@ -177,7 +172,6 @@ describe("PSP22Wrapper Tests", function () {
             storageDepositLimit: null
         }, bob.address)).output?.toHuman()?.Ok.replace(/,/g, '')).to.equal(new BN('0').toString());
 
-        const bobBalance = await erc20Contract.connect(signer).balanceOf(bobH160);
-        expect(bobBalance).to.equal('100000000000000000000');
+        expect(await erc20Contract.balanceOf(bobH160)).to.equal('100000000000000000000');
     });
 });
