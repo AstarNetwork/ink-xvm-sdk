@@ -11,9 +11,12 @@ use hex_literal::hex;
 use ink::{
     prelude::vec::Vec,
     primitives::AccountId,
+    env::hash::{Blake2x256, CryptoHash, HashOutput},
 };
 use xvm_builder::*;
+use scale::Encode;
 use au_ce_getters::UAExtension;
+use au_ce_getters::UnifiedAddress;
 type Balance = <ink::env::DefaultEnvironment as ink::env::Environment>::Balance;
 
 const EVM_ID: u8 = 0x0F;
@@ -46,7 +49,12 @@ impl XvmErc20 {
         amount: Balance,
         _data: Vec<u8>,
     ) -> Result<(), XvmError> {
-        let encoded_input = Self::transfer_encode(h160(&to), amount.into());
+        // Use the Account Unification Mapped address of the 'to'
+        let h160 = match UAExtension::to_h160_or_default(to) {
+            UnifiedAddress::Mapped(v) => v,
+            UnifiedAddress::Default(v) => v,
+        };
+        let encoded_input = Self::transfer_encode(H160::from_slice(h160.as_bytes()), amount.into());
         Xvm::xvm_call(
             EVM_ID,
             Vec::from(evm_contract_address.as_ref()),
@@ -169,8 +177,10 @@ impl XvmErc721 {
 }
 
 fn h160(from: &AccountId) -> H160 {
-    let mut dest: H160 = [0; 20].into();
-    dest.as_bytes_mut()
-        .copy_from_slice(&<AccountId as AsRef<[u8]>>::as_ref(from)[..20]);
-    dest
+    let payload = (b"evm:", from);
+    let encoded = payload.encode();
+    let mut hash_output =
+        <<Blake2x256 as HashOutput>::Type as Default>::default();
+    <Blake2x256 as CryptoHash>::hash(&encoded, &mut hash_output);
+    H160::from_slice(&hash_output[0..20])
 }

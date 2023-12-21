@@ -32,10 +32,12 @@
   "scripts": {
     "build": "hardhat compile",
     "test": "npx hardhat test ./test/psp22wrapper.ts --network local",
+    "test:shibuya": "npx hardhat test ./test/psp22wrapper.ts --network shibuya",
     "build:ink": "cargo contract build --manifest-path ink/contracts/psp22-wrapper/Cargo.toml"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.9.3",
-    "@polkadot/util-crypto": "^12.6.1"
+    "@polkadot/util-crypto": "^12.6.1",
+    "dotenv": "^16.3.1"
   }
 }

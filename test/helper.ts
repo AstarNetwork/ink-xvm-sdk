@@ -6,7 +6,7 @@ import {WeightV2} from "@polkadot/types/interfaces";
 export const DECIMALS = 1_000_000_000_000_000_000n;
 
 export async function transferNative(api: ApiPromise, to: any, alice: KeyringPair) {
-    const unsub = await api.tx.balances.transferKeepAlive(to, 1000n * DECIMALS)
+    const unsub = await api.tx.balances.transferKeepAlive(to, 5n * DECIMALS)
         .signAndSend(alice, {nonce: -1}, ({status}) => {
             if (status.isFinalized) {
                 unsub();
@@ -75,7 +75,8 @@ export async function contractCall(api: ApiPromise, contract: ContractPromise, t
             proofSize: 600_000,
         });
 
-    const {gasRequired, result} = await contract.query[tx](
+    // Dry run to get logs
+    const {result} = await contract.query[tx](
         signer.address,
         {
             gasLimit,
@@ -83,32 +84,12 @@ export async function contractCall(api: ApiPromise, contract: ContractPromise, t
         },
         ...params
     )
-
-    if (result.isErr) {
-        let error = ''
-        if (result.asErr.isModule) {
-            const dispatchError = api.registry.findMetaError(result.asErr.asModule)
-            error = dispatchError.docs.length ? dispatchError.docs.concat().toString() : dispatchError.name
-        } else {
-            error = result.asErr.toString()
-        }
-
-        console.error(error)
-        return
-    }
-
-    const estimatedGas = api.registry.createType(
-        'WeightV2',
-        {
-            refTime: gasRequired.refTime.toBn().muln(2),
-            proofSize: gasRequired.proofSize.toBn().muln(2),
-        }
-    )
+    console.log("CONTRACT TX RESULT", result.toHuman())
 
     let finish = false;
     const unsub = await contract.tx[tx](
         {
-            gasLimit: estimatedGas,
+            gasLimit: gasLimit,
             storageDepositLimit: null,
         },
         ...params

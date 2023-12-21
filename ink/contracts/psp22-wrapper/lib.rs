@@ -46,5 +46,10 @@ pub mod psp22_wrapper {
             XvmErc20::transfer(self.evm_address, caller, amount, Vec::new())
                 .map_err(|_| PSP22Error::Custom("transfer failed".to_owned()))
         }
+
+        #[ink(message)]
+        pub fn underlying_erc20(&self) -> Vec<u8> {
+            self.evm_address.to_vec()
+        }
     }
 }
