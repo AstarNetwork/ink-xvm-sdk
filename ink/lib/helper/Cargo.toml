@@ -1,0 +1,30 @@
+[package]
+name = "xvm-helper"
+version = "0.1.0"
+authors = ["Astar Network"]
+edition = "2021"
+
+[dependencies]
+ink = { version = "4.3", default-features = false }
+scale = { package = "parity-scale-codec", version = "3", default-features = false, features = [
+    "derive",
+] }
+scale-info = { version = "2.5", default-features = false, features = [
+    "derive",
+], optional = true }
+xvm-builder = { path = "../xvm-builder", default-features = false }
+
+hex-literal = "0.4.1"
+ethabi = { git = "https://github.com/akru/ethabi", default-features = false }
+
+au-ce-getters = { path = "../au-ce", default-features = false }
+
+sp-core = { version = "25.0.0", default-features = false }
+
+[lib]
+path = "lib.rs"
+
+[features]
+default = ["std"]
+std = ["ink/std", "scale/std", "scale-info/std", "xvm-builder/std", "au-ce-getters/std", "sp-core/std"]
+ink-as-dependency = []

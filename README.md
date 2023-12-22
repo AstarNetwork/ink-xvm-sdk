@@ -1,47 +1,23 @@
 # Ink! XVM SDK
 
-This repository contains everything needed to use XVM from WASM contracts.
+This repository contains examples contracts using XVM to call EVM from ink! needed to use XVM from WASM contracts.
 It contains an implementation of XVM chain-extension to use in your contracts.
 As well as ink! contracts SDK that implements XVM chain-extension to be used as is.
 
 ## Contracts SDK
 
-XVMv2 can only process transactions that returns `()` hence query values is not supported yet. These contracts only implement functions that modify state.
-Transactions pass multiple layers of XVM abstractions in one line. All cross-VM communication looks like it all going inside the smart contract.
-
-#### ERC20
-
-This implementation is a controller of an underlying `ERC20` on EVM. Interact with `H160` addresses
-
-#### PSP22 Controller
-
-This implementation is a controller of an underlying `ERC20` on EVM. Interact with `H256` native substrate addresses.
-It implements `PSP22` standard, and thus can be used in any DEX/wallet supporting it.
-
 #### PSP22 Wrapper
 
-This implementation is a wrapper of an underlying `ERC20` on EVM. Interact with `H256` native substrate addresses.
+This implementation is a wrapper of an underlying `ERC20` on EVM. Interact with native substrate addresses.
 As it implements wrapper pattern it has `deposit` & `withdraw` function and can be used as a bridgeless solution between WASM VM & EVM.
 It implements `PSP22` standard, thus can be used in any DEX/wallet supporting it.
-
-#### ERC721
-
-This implementation is a controller of an underlying `ERC721` on EVM. Interact with `H160` addresses
-
-#### PSP34 Controller
-
-This implementation is a controller of an underlying `ERC721` on EVM. Interact with `H256` native substrate addresses.
-It implements `PSP34` standard, and thus can be used in any DEX/wallet supporting it.
+Please have a look at the tests that describe the flow to use `deposit` and `withdraw`.
 
 #### PSP34 Wrapper
 
-This implementation is a wrapper of an underlying `ERC721` on EVM. Interact with `H256` native substrate addresses.
+This implementation is a wrapper of an underlying `ERC721` on EVM. Interact with substrate native substrate addresses.
 As it implements wrapper pattern it has `deposit` & `withdraw` function and can be used as a bridgeless solution between WASM VM & EVM.
 It implements `PSP34` standard, and thus can be used in any DEX/wallet supporting it.
-
-#### XVM Transfer
-
-This implementation is a controller of an underlying `ERC20` on EVM. Interact with both `H256` native substrate and `H160` addresses. This is a universal contract where one of the parameters for the transfer function is the ERC20 contract address. This contract is used on [Astar Portal](https://portal.astar.network/).
 
 ## Library
 
@@ -65,13 +41,18 @@ Have a look at PSP22 Wrapper for an example.
 
 ## Usage
 
-##### Try it local!
+##### Try it!
 
-1. Build & run [Astar](https://github.com/AstarNetwork/Astar) in local `./target/release/astar-collator --dev --tmp`
-2. Add [Test account](https://github.com/AstarNetwork/Astar/blob/de5b8db29794917ffab8fb0a4a7b2a9a52491452/bin/collator/src/local/chain_spec.rs#L61-L66) that is funded with native token to metamask .
-3. Using Remix IDE deploy an ERC20 (or ERC721 mint) using injected provider to Astar local & the test account.
-4. Transfer ERC20 or mint ERC721 token from test account to Alice H160.
-5. Deploy ink! contract with ERC20/ERC721 address from EVM.
-6. Play with it!
+1. Clone the repo
+2. Run `yarn`
+3. Build ink! contracts `yarn build:ink`
 
-Use [Hoon's address converter](https://hoonsubin.github.io/evm-substrate-address-converter/)
+**To run on local node:**
+Ensure you have a local node running with `./target/release/astar-collator --dev -lruntime::contracts=debug -l=runtime=debug,xvm=trace --enable-evm-rpcp` (to have XVM and ink! logs).     
+Then run `yarn test`.
+
+**To run on Shibuya:**
+Create a .env file from .env.example and fill it with your credentials:
+Add your Shibuya EVM private key in `ACCOUNT_PRIVATE_KEY_EVM`
+And your Shibuya Substrate passphrase in `SUBSTRATE_MNEMO`.
+Then run `yarn test:shibuya`.

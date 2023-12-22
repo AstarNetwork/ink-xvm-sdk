@@ -1,0 +1,35 @@
+[package]
+name = "xvm-sdk-psp34-wrapper"
+version = "0.1.0"
+authors = ["Astar Network"]
+edition = "2021"
+
+[dependencies]
+ink = { version = "4.3", default-features = false }
+ethabi = { git = "https://github.com/akru/ethabi", default-features = false }
+scale = { package = "parity-scale-codec", version = "3", default-features = false, features = [
+    "derive",
+] }
+scale-info = { version = "2.5", default-features = false, features = [
+    "derive",
+], optional = true }
+xvm-helper = { path = "../../lib/helper", default-features = false }
+
+openbrush = { tag = "4.0.0", git = "https://github.com/Brushfam/openbrush-contracts", default-features = false, features = [
+    "psp34",
+] }
+
+
+[lib]
+path = "lib.rs"
+
+[features]
+default = ["std"]
+std = [
+    "ink/std",
+    "scale/std",
+    "scale-info/std",
+    "openbrush/std",
+    "xvm-helper/std",
+]
+ink-as-dependency = []
